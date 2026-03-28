@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Betting Battle Â· Grammar & Vocab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./src/styles/main.css" />
+</head>
+<body>
+<canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pts"></div>
+
+  <div class="page">
+
+    <div class="hero">
+      <div class="live-badge"><span class="ldot"></span>LIVE CLASSROOM GAME</div>
+      <div class="gtitle">
+        <span class="w-sky">Grammar</span> &amp; <span class="w-gold">Vocab</span><br>
+        Betting Battle
+      </div>
+      <div class="tsub">Summit 1 Edition · Teams of 4 · Strategic Betting</div>
+      <div class="pills">
+        <span class="pill pb">⚡ 5 Rounds</span>
+        <span class="pill pg">🪙 50 pts Start</span>
+        <span class="pill pm">✦ 40+ Words</span>
+      </div>
+    </div>
+
+    <div class="rstrip">
+      <span class="rl">Rounds</span>
+      <span class="rt r1">① Vocab Rush</span>
+      <span class="rt r2">② Grammar Strike</span>
+      <span class="rt r3">③ Speed Buzzer</span>
+      <span class="rt r4">④ Elimination Bet</span>
+      <span class="rt r5">⑤ Final All-in</span>
+    </div>
+
+    <div class="main-panel">
+
+      <div class="tabs">
+        <button class="tb ah" id="th" onclick="switchTab('host')">🎙️ Host</button>
+        <button class="tb" id="tj" onclick="switchTab('join')">🎮 Join</button>
+      </div>
+
+      <div class="crow">
+
+        <div class="card ch" id="ph">
+          <div class="cbar"></div>
+          <div class="chead">
+            <div class="cion">🎙️</div>
+            <div>
+              <div class="ctitle">Host a Game</div>
+              <div class="cdesc">Create a room &amp; share<br>the code with your class.</div>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom: auto; margin-top: 10px;">
+            <div class="flabel">Host Name / Class</div>
+            <div class="iwrap">
+              <span class="fico">👤</span>
+              <input class="fi" type="text" placeholder="e.g. Mr. Minh · Class A1" autocomplete="off" />
+            </div>
+          </div>
+
+          <button class="btn bh" id="bcr" onclick="doCreate(this)">
+            <span id="bcri">✦</span><span id="bcrt">Create Room</span>
+          </button>
+        </div>
+
+        <div class="ordiv">
+          <div class="orl"></div>
+          <div class="orlabel">OR</div>
+          <div class="orl orl2"></div>
+        </div>
+
+        <div class="card cj" id="pj" style="display:none">
+          <div class="cbar"></div>
+          <div class="chead">
+            <div class="cion">🎮</div>
+            <div>
+              <div class="ctitle">Join a Game</div>
+              <div class="cdesc">Enter the room code<br>shared by your host.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="flabel">Your Name</div>
+            <div class="iwrap">
+              <span class="fico">✏️</span>
+              <input class="fi" type="text" placeholder="e.g. Minh Anh" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="flabel">Room Code</div>
+            <div class="iwrap">
+              <input class="fi fi-code" id="rci" type="text" maxlength="6" placeholder="A B C 1 2 3" autocomplete="off"
+                inputmode="text" />
+            </div>
+          </div>
+
+          <div class="cdots">
+            <span class="cd" id="d0"></span>
+            <span class="cd" id="d1"></span>
+            <span class="cd" id="d2"></span>
+            <span class="cd" id="d3"></span>
+            <span class="cd" id="d4"></span>
+            <span class="cd" id="d5"></span>
+          </div>
+
+          <button class="btn bj" id="bjn" onclick="doJoin(this)">
+            <span id="bjni">→</span><span id="bjnt">Enter Room</span>
+          </button>
+        </div>
+
+        <div class="card cj" id="pjd">
+          <div class="cbar"></div>
+          <div class="chead">
+            <div class="cion">🎮</div>
+            <div>
+              <div class="ctitle">Join a Game</div>
+              <div class="cdesc">Enter the room code<br>shared by your host.</div>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="flabel">Your Name</div>
+            <div class="iwrap">
+              <span class="fico">✏️</span>
+              <input class="fi" type="text" placeholder="e.g. Minh Anh" autocomplete="off" />
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="flabel">Room Code</div>
+            <div class="iwrap">
+              <input class="fi fi-code" id="rcid" type="text" maxlength="6" placeholder="A B C 1 2 3" autocomplete="off"
+                inputmode="text" />
+            </div>
+          </div>
+
+          <div class="cdots">
+            <span class="cd" id="dd0"></span>
+            <span class="cd" id="dd1"></span>
+            <span class="cd" id="dd2"></span>
+            <span class="cd" id="dd3"></span>
+            <span class="cd" id="dd4"></span>
+            <span class="cd" id="dd5"></span>
+          </div>
+
+          <button class="btn bj" onclick="doJoinDesktop(this)">
+            <span id="bjndi">→</span><span id="bjndt">Enter Room</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="bottom">
+      <div class="chip">📖 How to Play</div>
+      <div class="chip">📋 Rulebook</div>
+      <div class="chip">🔤 Vocab List</div>
+      <div class="chip">🏅 Leaderboard</div>
+    </div>
+
+    <div class="foot"><strong>Assignment 2 · E-Game Design</strong> &nbsp;·&nbsp; Summit 1 Edition</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="./src/main.js"></script>
+</body>
+</html>
