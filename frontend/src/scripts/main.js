@@ -1,4 +1,4 @@
-﻿/* ── CANVAS BG ── */
+/* ── CANVAS BG ── */
     (() => {
       const cv = document.getElementById('cv');
       const ctx = cv.getContext('2d');
@@ -60,10 +60,12 @@
     /* desktop join visible, mobile join hidden initially */
     function applyLayout() {
       const mob = innerWidth < 600;
-      document.getElementById('pjd').style.display = mob ? 'none' : 'flex';
-      document.getElementById('pj').style.display = 'none';
-      document.getElementById('ph').style.display = 'flex';
-      if (!mob) { document.getElementById('tabs'); }
+      const pjd = document.getElementById('pjd');
+      if(pjd) pjd.style.display = mob ? 'none' : 'flex';
+      const pj = document.getElementById('pj');
+      if(pj) pj.style.display = 'none';
+      const ph = document.getElementById('ph');
+      if(ph) ph.style.display = 'flex';
     }
     applyLayout(); addEventListener('resize', applyLayout);
 
@@ -87,15 +89,38 @@
       clearTimeout(t._to); t._to = setTimeout(() => t.classList.remove('show'), 2400);
     }
 
+    /* ── AVATARS ── */
+    function selAva(el) {
+      const p = el.parentElement;
+      if (p) {
+        p.querySelectorAll('.ava-opt').forEach(o => o.classList.remove('active'));
+        el.classList.add('active');
+        
+        // Spawn particles immediately over the clicked avatar natively matching game aesthetic
+        const rect = el.getBoundingClientRect();
+        const colors = ['#38BDF8', '#FBBF24', '#34D399'];
+        for(let i=0; i<4; i++) {
+          const pt = document.createElement('div');
+          pt.className = 'click-particle';
+          pt.style.left = (rect.left + rect.width/2) + 'px';
+          pt.style.top = (rect.top + rect.height/2) + 'px';
+          pt.style.setProperty('--dx', (Math.random()-0.5)*40 + 'px');
+          pt.style.setProperty('--dy', (Math.random()-1)*40 + 'px');
+          pt.style.background = colors[Math.floor(Math.random()*colors.length)];
+          pt.style.width = pt.style.height = (Math.random()*3+3)+'px';
+          document.body.appendChild(pt);
+          setTimeout(() => pt.remove(), 550);
+        }
+      }
+    }
+
     /* ── BUTTONS ── */
     function doCreate(btn) {
       btn.disabled = true;
       document.getElementById('bcri').textContent = '⏳'; document.getElementById('bcrt').textContent = 'Creating Room...';
       setTimeout(() => {
-        btn.disabled = false;
-        document.getElementById('bcri').textContent = '✦'; document.getElementById('bcrt').textContent = 'Create Room';
-        toast('🎉 Room created! Code: XK7M2Q');
-      }, 1600);
+        window.location.href = './src/pages/host/host-room.html';
+      }, 1200);
     }
 
     function doJoin(btn) {
@@ -127,3 +152,40 @@
         toast('✅ Joined! Waiting for host...');
       }, 1500);
     }
+
+    /* ── CLICK PARTICLES ── */
+    document.addEventListener('click', (e) => {
+      // Check if it's a clickable element
+      const target = e.target.closest('button, .btn, .chip, .hr-mode-opt, .tb, .card');
+      if (!target) return;
+      
+      const numParticles = Math.floor(Math.random() * 4) + 6; // 6-9 particles
+      const colors = ['#38BDF8', '#0EA5E9', '#34D399', '#FBBF24', '#FFFFFF', '#06B6D4']; // Diamond and UI colors
+      
+      for (let i = 0; i < numParticles; i++) {
+        const p = document.createElement('div');
+        p.className = 'click-particle';
+        
+        // Starting position exactly at the mouse click coordinate
+        p.style.left = e.clientX + 'px';
+        p.style.top = e.clientY + 'px';
+        
+        // Random direction (-40 to 40px X, -60 to 10px Y for flying slightly UP)
+        const dx = (Math.random() - 0.5) * 80;
+        const dy = (Math.random() - 0.8) * 80;
+        
+        p.style.setProperty('--dx', dx + 'px');
+        p.style.setProperty('--dy', dy + 'px');
+        p.style.background = colors[Math.floor(Math.random() * colors.length)];
+        
+        // Size 3 to 6px
+        const size = Math.random() * 3 + 3;
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        
+        document.body.appendChild(p);
+        
+        // Cleanup wrapper
+        setTimeout(() => p.remove(), 550);
+      }
+    });

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Host Waiting Room · Betting Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles/main.css" />
+  <link rel="stylesheet" href="./host-room.css" />
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pts"></div>
+
+  <div class="page">
+    <div class="hr-page">
+      
+      <!-- Header -->
+      <div class="hr-header">
+        <div class="hr-logo"><span class="w-sky">Betting</span> <span class="w-gold">Battle</span></div>
+        <div class="hr-status">
+          <div class="hr-status-dot"></div>
+          Waiting for players to join...
+        </div>
+        <button class="btn bj" style="width: auto; padding: 10px 18px; font-size: 15px;" onclick="leaveRoom()">🚪 Leave Room</button>
+      </div>
+
+      <!-- Main Layout Grid -->
+      <div class="hr-grid">
+        
+        <!-- Left Column: Share & Settings -->
+        <div class="hr-left">
+          
+          <!-- Share Card -->
+          <div class="card ch card-slim mb-20">
+            <div class="cbar"></div>
+            <div class="chead" style="margin-bottom: 20px;">
+              <div class="cion">🔗</div>
+              <div>
+                <div class="ctitle">Share Room</div>
+                <div class="cdesc">Players join using this code or QR</div>
+              </div>
+            </div>
+
+            <div class="hr-share-card">
+              <!-- QR Code (using a standard generator API for demo) -->
+              <div class="hr-qr">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=170x170&data=https://game.bettingbattle.com/join/XK7M2Q&color=0F2034" alt="QR Code" />
+              </div>
+
+              <!-- Room Code Box -->
+              <div class="hr-code-box">
+                <div class="hr-code-text" id="roomCodeTxt">X K 7 M 2 Q</div>
+                <button class="hr-copy-btn" onclick="copyToClipboard('XK7M2Q', this)">Copy</button>
+              </div>
+
+              <!-- Link Box -->
+              <div class="hr-link-box">
+                <div class="hr-link-text">https://game.example.com/join/XK7M2Q</div>
+                <button class="hr-copy-btn" onclick="copyToClipboard('https://game.example.com/join/XK7M2Q', this)">Copy Link</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Card -->
+          <div class="card ch card-slim">
+            <div class="cbar"></div>
+            <div class="chead" style="margin-bottom: 20px;">
+              <div class="cion">⚙️</div>
+              <div>
+                <div class="ctitle">Team Settings</div>
+                <div class="cdesc">Choose how players are assigned to teams</div>
+              </div>
+            </div>
+
+            <div class="hr-settings">
+              <div class="hr-mode-opt active" onclick="selectMode(this)">
+                <div class="hr-mode-radio"></div>
+                <div class="hr-mode-info">
+                  <div class="hr-mode-title">🎲 Random Assignment</div>
+                  <div class="hr-mode-desc">Auto-assign equally to available teams</div>
+                </div>
+              </div>
+
+              <div class="hr-mode-opt" onclick="selectMode(this)">
+                <div class="hr-mode-radio"></div>
+                <div class="hr-mode-info">
+                  <div class="hr-mode-title">🙋 Player Selection</div>
+                  <div class="hr-mode-desc">Players pick their own team upon joining</div>
+                </div>
+              </div>
+
+              <div class="hr-mode-opt" onclick="selectMode(this)">
+                <div class="hr-mode-radio"></div>
+                <div class="hr-mode-info">
+                  <div class="hr-mode-title">👑 Host Manual</div>
+                  <div class="hr-mode-desc">You manually assign players to teams</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Column: Participants List -->
+        <div class="card cj card-slim" style="height: 100%; display: flex; flex-direction: column;">
+          <div class="cbar"></div>
+          
+          <div class="hr-players-head">
+             <div class="chead">
+               <div class="cion">👥</div>
+               <div>
+                 <div class="ctitle">Participants</div>
+                 <div class="cdesc">People currently in the lobby</div>
+               </div>
+             </div>
+             <div class="hr-count">5 / 40</div>
+          </div>
+
+          <div class="hr-players-grid" style="flex: 1;">
+            <!-- Mock Players -->
+            <div class="hr-player-chip"><div class="hr-avatar">🦁</div><div class="hr-name">Minh Anh</div></div>
+            <div class="hr-player-chip"><div class="hr-avatar">🦊</div><div class="hr-name">Tuan Dat</div></div>
+            <div class="hr-player-chip"><div class="hr-avatar">🐼</div><div class="hr-name">Ngoc Diep</div></div>
+            <div class="hr-player-chip"><div class="hr-avatar">🐯</div><div class="hr-name">Khoa Nam</div></div>
+            <div class="hr-player-chip"><div class="hr-avatar">🦉</div><div class="hr-name">Bao Yen</div></div>
+            <!-- Example of what it looks like with more players -->
+            <!--
+            <div class="hr-player-chip"><div class="hr-avatar">🐸</div><div class="hr-name">Duc Hai</div></div>
+            <div class="hr-player-chip"><div class="hr-avatar">🐰</div><div class="hr-name">Thu Ha</div></div>
+            -->
+          </div>
+
+          <button class="btn hr-launch-btn" onclick="launchGame()">
+            <span>🚀</span> Launch Game
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Room Modal -->
+  <div class="hr-modal-overlay" id="leaveModal">
+    <div class="hr-modal">
+      <div class="hr-modal-icon">🚪</div>
+      <div class="hr-modal-title">Leave Room?</div>
+      <div class="hr-modal-desc">Are you sure you want to leave? This room will be closed.</div>
+      <div class="hr-modal-actions">
+        <button class="btn" style="background: #E2EDF5; color: var(--ink3); box-shadow: none;" onclick="closeLeaveModal()">Stay</button>
+        <button class="btn" style="background: var(--coral); box-shadow: 0 6px 22px rgba(251, 113, 133, 0.4);" onclick="confirmLeaveRoom()">Leave</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Toast -->
+  <div class="toast" id="toast"></div>
+  
+  <!-- Canvas background script reused -->
+  <script src="../../scripts/main.js"></script>
+  <!-- Room logic script -->
+  <script src="./host-room.js"></script>
+</body>
+</html>

@@ -1,14 +1,17 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Betting Battle Â· Grammar & Vocab</title>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap"
+    rel="stylesheet" />
   <link rel="stylesheet" href="./src/styles/main.css" />
 </head>
+
 <body>
-<canvas id="cv"></canvas>
+  <canvas id="cv"></canvas>
   <div class="grain"></div>
   <div class="particles" id="pts"></div>
 
@@ -94,6 +97,20 @@
           </div>
 
           <div class="field">
+            <div class="flabel">Choose Avatar</div>
+            <div class="ava-sel">
+              <div class="ava-opt active" onclick="selAva(this)">🦁</div>
+              <div class="ava-opt" onclick="selAva(this)">🦊</div>
+              <div class="ava-opt" onclick="selAva(this)">🐼</div>
+              <div class="ava-opt" onclick="selAva(this)">🐯</div>
+              <div class="ava-opt" onclick="selAva(this)">🦉</div>
+              <div class="ava-opt" onclick="selAva(this)">🐸</div>
+              <div class="ava-opt" onclick="selAva(this)">🐰</div>
+              <div class="ava-opt" onclick="selAva(this)">🐻</div>
+            </div>
+          </div>
+
+          <div class="field">
             <div class="flabel">Room Code</div>
             <div class="iwrap">
               <input class="fi fi-code" id="rci" type="text" maxlength="6" placeholder="A B C 1 2 3" autocomplete="off"
@@ -134,6 +151,20 @@
           </div>
 
           <div class="field">
+            <div class="flabel">Choose Avatar</div>
+            <div class="ava-sel">
+              <div class="ava-opt active" onclick="selAva(this)">🦁</div>
+              <div class="ava-opt" onclick="selAva(this)">🦊</div>
+              <div class="ava-opt" onclick="selAva(this)">🐼</div>
+              <div class="ava-opt" onclick="selAva(this)">🐯</div>
+              <div class="ava-opt" onclick="selAva(this)">🦉</div>
+              <div class="ava-opt" onclick="selAva(this)">🐸</div>
+              <div class="ava-opt" onclick="selAva(this)">🐰</div>
+              <div class="ava-opt" onclick="selAva(this)">🐻</div>
+            </div>
+          </div>
+
+          <div class="field">
             <div class="flabel">Room Code</div>
             <div class="iwrap">
               <input class="fi fi-code" id="rcid" type="text" maxlength="6" placeholder="A B C 1 2 3" autocomplete="off"
@@ -169,6 +200,7 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="./src/main.js"></script>
+  <script src="./src/scripts/main.js"></script>
 </body>
+
 </html>
