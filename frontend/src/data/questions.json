@@ -1,0 +1,466 @@
+{
+  "multiple_choice": [
+    {
+      "id": 1,
+      "question": "I don't mind _____ late to finish the community service project.",
+      "options": [
+        "A. him arrive",
+        "B. him arriving",
+        "C. his arriving",
+        "D. he arriving"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. him arrive"
+    },
+    {
+      "id": 2,
+      "question": "_____ the security cameras _____ the guards help keep this neighborhood secure.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. Both / and"
+    },
+    {
+      "id": 3,
+      "question": "The victim was vulnerable because she let _____ guard down in the crowded area.",
+      "options": [
+        "A. his",
+        "B. her",
+        "C. their",
+        "D. its"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. her"
+    },
+    {
+      "id": 4,
+      "question": "_____ pickpockets _____ purse-snatchers are common in tourist attractions.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Not only / but also"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. Both / and"
+    },
+    {
+      "id": 5,
+      "question": "What really _____ me off is when people cut in line without apologizing.",
+      "options": [
+        "A. ticks",
+        "B. bugs",
+        "C. gets",
+        "D. all are correct"
+      ],
+      "correct_answer": "D",
+      "correct_answer_text": "D. all are correct"
+    },
+    {
+      "id": 6,
+      "question": "The residents were annoyed by _____ loudly in the hallway late at night.",
+      "options": [
+        "A. the neighbors talking",
+        "B. the neighbors' talking",
+        "C. neighbors talk",
+        "D. the neighbors to talk"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. the neighbors' talking"
+    },
+    {
+      "id": 7,
+      "question": "_____ the bustling city life _____ the slower pace of rural living appeals to different people.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Not only / but also"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. Either / or"
+    },
+    {
+      "id": 8,
+      "question": "You should keep your valuables in _____ pockets to avoid theft.",
+      "options": [
+        "A. well-lit",
+        "B. zippered or buttoned",
+        "C. bumper-to-bumper",
+        "D. high-crime"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. zippered or buttoned"
+    },
+    {
+      "id": 9,
+      "question": "_____ the crowded subway _____ the noisy streets bother him now that he is accustomed to urban life.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "C",
+      "correct_answer_text": "C. Neither / nor"
+    },
+    {
+      "id": 10,
+      "question": "I appreciate _____ so courteous to the out-of-town visitors.",
+      "options": [
+        "A. you being",
+        "B. your being",
+        "C. you are",
+        "D. you to be"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. your being"
+    },
+    {
+      "id": 11,
+      "question": "_____ we choose to live in a suburb _____ in a densely-populated area, safety should be our priority.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "D",
+      "correct_answer_text": "D. Whether / or"
+    },
+    {
+      "id": 12,
+      "question": "What really gets on my _____ is when people honk their car horns late at night.",
+      "options": [
+        "A. mind",
+        "B. nerves",
+        "C. way",
+        "D. off"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. nerves"
+    },
+    {
+      "id": 13,
+      "question": "The mugger targeted the tourist because of _____ around with his phone without paying attention.",
+      "options": [
+        "A. him fumbling",
+        "B. his fumbling",
+        "C. he fumbles",
+        "D. him to fumble"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. his fumbling"
+    },
+    {
+      "id": 14,
+      "question": "_____ the beautiful amenities _____ the well-maintained historical buildings make this ideal neighborhood attractive.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Not only / but also"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. Both / and"
+    },
+    {
+      "id": 15,
+      "question": "Residents should stay _____ of their surroundings, especially in high-crime neighborhoods.",
+      "options": [
+        "A. vulnerable",
+        "B. suspicious",
+        "C. aware",
+        "D. mature"
+      ],
+      "correct_answer": "C",
+      "correct_answer_text": "C. aware"
+    },
+    {
+      "id": 16,
+      "question": "The crime prevention workshop emphasized _____ your guard down in unfamiliar areas.",
+      "options": [
+        "A. never let",
+        "B. never letting",
+        "C. your never letting",
+        "D. you never let"
+      ],
+      "correct_answer": "C",
+      "correct_answer_text": "C. your never letting"
+    },
+    {
+      "id": 17,
+      "question": "_____ violent crime _____ property theft have decreased since more security cameras were installed.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. Both / and"
+    },
+    {
+      "id": 18,
+      "question": "It goes without _____ that you should avoid walking alone in poorly lit areas.",
+      "options": [
+        "A. say",
+        "B. saying",
+        "C. said",
+        "D. to say"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. saying"
+    },
+    {
+      "id": 19,
+      "question": "_____ can spoil your experience in an otherwise beautiful city.",
+      "options": [
+        "A. A mixed blessing",
+        "B. Bumper-to-bumper traffic",
+        "C. Pet peeve",
+        "D. A money belt"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. Bumper-to-bumper traffic"
+    },
+    {
+      "id": 20,
+      "question": "The police officer insisted on _____ their identification before letting them enter.",
+      "options": [
+        "A. the strangers showing",
+        "B. the strangers' showing",
+        "C. strangers show",
+        "D. the strangers to show"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. the strangers' showing"
+    },
+    {
+      "id": 21,
+      "question": "People who live in this area are used to _____ their own business and not intruding on others.",
+      "options": [
+        "A. mind",
+        "B. to mind",
+        "C. minding",
+        "D. minded"
+      ],
+      "correct_answer": "C",
+      "correct_answer_text": "C. minding"
+    },
+    {
+      "id": 22,
+      "question": "_____ did the criminals target tourists, _____ they operated near popular attractions.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Not only / but also"
+      ],
+      "correct_answer": "D",
+      "correct_answer_text": "D. Not only / but also"
+    },
+    {
+      "id": 23,
+      "question": "The community's _____ the park helped reduce litter and criminal activities.",
+      "options": [
+        "A. beautifying",
+        "B. beautify",
+        "C. beautified",
+        "D. to beautify"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. beautifying"
+    },
+    {
+      "id": 24,
+      "question": "_____ you live in a bustling urban area _____ a quiet rural one, you should always look out for your neighbors.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "D",
+      "correct_answer_text": "D. Whether / or"
+    },
+    {
+      "id": 25,
+      "question": "There's _____ in numbers, so try to travel with friends when visiting unfamiliar places.",
+      "options": [
+        "A. safety",
+        "B. disruption",
+        "C. distraction",
+        "D. precaution"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. safety"
+    },
+    {
+      "id": 26,
+      "question": "The community leaders were happy about _____ so much money for local charities.",
+      "options": [
+        "A. the residents raising",
+        "B. the residents' raising",
+        "C. residents raise",
+        "D. the residents to raise"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. the residents' raising"
+    },
+    {
+      "id": 27,
+      "question": "_____ the fast-paced lifestyle _____ the constant noise are things you have to accept in the city center.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Not only / but also"
+      ],
+      "correct_answer": "A",
+      "correct_answer_text": "A. Both / and"
+    },
+    {
+      "id": 28,
+      "question": "What really bugs me is when people smoke _____ near public buildings.",
+      "options": [
+        "A. cigarette",
+        "B. cigarette smoke",
+        "C. cigarettes",
+        "D. smoking"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. cigarette smoke"
+    },
+    {
+      "id": 29,
+      "question": "The success of the Ice Bucket Challenge was due to _____ attention to a meaningful cause.",
+      "options": [
+        "A. celebrities calling",
+        "B. celebrities' calling",
+        "C. celebrities call",
+        "D. celebrities to call"
+      ],
+      "correct_answer": "B",
+      "correct_answer_text": "B. celebrities' calling"
+    },
+    {
+      "id": 30,
+      "question": "_____ you settle in the suburbs _____ in the city, it will take some getting used to.",
+      "options": [
+        "A. Both / and",
+        "B. Either / or",
+        "C. Neither / nor",
+        "D. Whether / or"
+      ],
+      "correct_answer": "D",
+      "correct_answer_text": "D. Whether / or"
+    }
+  ],
+  "gap_fill": [
+    {
+      "id": 1,
+      "question": "Living in a bustling city can be exciting, but it will ____________________ (take / get / use) for someone from a rural area.",
+      "correct_answer": "take some getting used to"
+    },
+    {
+      "id": 2,
+      "question": "____________________ (both / security cameras / and / guards) help reduce criminal activities in this urban area.",
+      "correct_answer": "Both security cameras and guards"
+    },
+    {
+      "id": 3,
+      "question": "I really appreciate ____________________ (neighbors / look out) for each other during the holiday season.",
+      "correct_answer": "the neighbors' looking out"
+    },
+    {
+      "id": 4,
+      "question": "You should always walk in ____________________ (well / light) areas to avoid becoming a target for criminals.",
+      "correct_answer": "well-lit"
+    },
+    {
+      "id": 5,
+      "question": "____________________ (either / you / settle in) a densely-populated neighborhood or a quiet suburb, you will find both have advantages and disadvantages.",
+      "correct_answer": "Whether you settle in"
+    },
+    {
+      "id": 6,
+      "question": "The victim didn't notice ____________________ (pickpocket / take) her wallet because she was distracted.",
+      "correct_answer": "the pickpocket's taking"
+    },
+    {
+      "id": 7,
+      "question": "What gets on my nerves is ____________________ (people / cut) in line without any consideration for others.",
+      "correct_answer": "people's cutting"
+    },
+    {
+      "id": 8,
+      "question": "The new residents are slowly ____________________ (settle) into the community and joining local activities.",
+      "correct_answer": "settling in"
+    },
+    {
+      "id": 9,
+      "question": "____________________ (not only / theft) but also violent crime have decreased in this area since the new measures were implemented.",
+      "correct_answer": "Not only theft"
+    },
+    {
+      "id": 10,
+      "question": "Even though some neighbors may seem nosy, they usually ____________________ (mean) well.",
+      "correct_answer": "mean"
+    },
+    {
+      "id": 11,
+      "question": "The ____________________ (amenities) in this ideal neighborhood include a gym, a swimming pool, and a community garden.",
+      "correct_answer": "amenities"
+    },
+    {
+      "id": 12,
+      "question": "Tourists are often ____________________ (vulnerable) to purse-snatchers because they are distracted by their surroundings.",
+      "correct_answer": "vulnerable"
+    },
+    {
+      "id": 13,
+      "question": "The success of the fundraising event was due to ____________________ (everyone / donate) generously.",
+      "correct_answer": "everyone's donating"
+    },
+    {
+      "id": 14,
+      "question": "When moving to a new city, it's important to ____________________ (look / bright side) and focus on the opportunities.",
+      "correct_answer": "look on the bright side"
+    },
+    {
+      "id": 15,
+      "question": "____________________ (neither / the noise) nor the crowded streets bother her now that she is accustomed to urban life.",
+      "correct_answer": "Neither the noise"
+    },
+    {
+      "id": 16,
+      "question": "The residents were concerned about ____________________ (strangers / congregate) outside their building late at night.",
+      "correct_answer": "strangers' congregating"
+    },
+    {
+      "id": 17,
+      "question": "I don't mind ____________________ (neighbors / mind) their own business, but I appreciate when they offer help when needed.",
+      "correct_answer": "neighbors' minding"
+    },
+    {
+      "id": 18,
+      "question": "____________________ (both / high-rise apartment buildings) and well-maintained historical buildings can be found in this area.",
+      "correct_answer": "Both high-rise apartment buildings"
+    },
+    {
+      "id": 19,
+      "question": "It's always ____________________ (better / safe / sorry), so keep your valuables in a secure place.",
+      "correct_answer": "better safe than sorry"
+    },
+    {
+      "id": 20,
+      "question": "____________________ (all / all), this neighborhood has a lot to offer despite its minor drawbacks.",
+      "correct_answer": "All in all"
+    }
+  ]
+}
