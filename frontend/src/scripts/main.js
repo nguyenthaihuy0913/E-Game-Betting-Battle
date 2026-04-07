@@ -45,27 +45,40 @@
     })();
 
     /* ── MOBILE TAB ── */
+    let currentTab = 'host';
     function switchTab(t) {
-      const ph = document.getElementById('ph'), pj = document.getElementById('pj');
+      currentTab = t;
       const th = document.getElementById('th'), tj = document.getElementById('tj');
       if (t === 'host') {
-        ph.style.display = 'flex'; pj.style.display = 'none';
         th.className = 'tb ah'; tj.className = 'tb';
       } else {
-        pj.style.display = 'flex'; ph.style.display = 'none';
         tj.className = 'tb aj'; th.className = 'tb';
       }
+      applyLayout();
     }
 
-    /* desktop join visible, mobile join hidden initially */
     function applyLayout() {
       const mob = innerWidth < 600;
       const pjd = document.getElementById('pjd');
-      if(pjd) pjd.style.display = mob ? 'none' : 'flex';
       const pj = document.getElementById('pj');
-      if(pj) pj.style.display = 'none';
       const ph = document.getElementById('ph');
-      if(ph) ph.style.display = 'flex';
+      
+      if (!mob) {
+         // Desktop: Show both Host and Desktop-Join. Hide Mobile-Join.
+         if(ph) ph.style.display = 'flex';
+         if(pjd) pjd.style.display = 'flex';
+         if(pj) pj.style.display = 'none';
+      } else {
+         // Mobile: Only show one at a time based on active tab
+         if(pjd) pjd.style.display = 'none';
+         if (currentTab === 'host') {
+            if(ph) ph.style.display = 'flex';
+            if(pj) pj.style.display = 'none';
+         } else {
+            if(ph) ph.style.display = 'none';
+            if(pj) pj.style.display = 'flex';
+         }
+      }
     }
     applyLayout(); addEventListener('resize', applyLayout);
 
@@ -113,44 +126,104 @@
         }
       }
     }
+    
+    // Horizontal scroll avatars
+    document.querySelectorAll('.ava-sel').forEach(el => {
+        el.addEventListener('wheel', (e) => {
+            if(e.deltaY !== 0) {
+                e.preventDefault();
+                el.scrollLeft += e.deltaY;
+            }
+        });
+        
+        // Drag to scroll logic
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+
+        el.addEventListener('mousedown', (e) => {
+            isDown = true;
+            startX = e.pageX - el.offsetLeft;
+            scrollLeft = el.scrollLeft;
+        });
+        el.addEventListener('mouseleave', () => { isDown = false; });
+        el.addEventListener('mouseup', () => { isDown = false; });
+        el.addEventListener('mousemove', (e) => {
+            if(!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - el.offsetLeft;
+            const walk = (x - startX) * 1.5; // Scroll speed multiplier
+            el.scrollLeft = scrollLeft - walk;
+        });
+    });
 
     /* ── BUTTONS ── */
     function doCreate(btn) {
+      if (window.playCreate) window.playCreate();
       btn.disabled = true;
       document.getElementById('bcri').textContent = '⏳'; document.getElementById('bcrt').textContent = 'Creating Room...';
-      setTimeout(() => {
-        window.location.href = './src/pages/host/host-room.html';
-      }, 1200);
+      
+      const hostName = document.querySelector('.ch .fi').value.trim() || 'Host';
+      
+      if (window.GameClient) {
+          window.GameClient.createRoom(hostName, (roomId) => {
+              setTimeout(() => {
+                window.location.href = './src/pages/host/host-room.html';
+              }, 600);
+          });
+      } else {
+        setTimeout(() => window.location.href = './src/pages/host/host-room.html', 1200);
+      }
     }
 
     function doJoin(btn) {
-      const v = document.getElementById('rci').value.trim();
-      if (v.length < 6) {
-        [0, 1, 2, 3, 4, 5].forEach(i => { const d = document.getElementById('d' + i); d.classList.add('err'); setTimeout(() => d.classList.remove('err'), 600) });
-        toast('⚠️ Enter a valid 6-character code!'); return;
-      }
-      btn.disabled = true;
-      document.getElementById('bjni').textContent = '⏳'; document.getElementById('bjnt').textContent = 'Joining...';
-      setTimeout(() => {
-        btn.disabled = false;
-        document.getElementById('bjni').textContent = '→'; document.getElementById('bjnt').textContent = 'Enter Room';
-        toast('✅ Joined! Waiting for host...');
-      }, 1500);
-    }
+      const isDesktop = btn.closest('.card').id === 'pjd';
+      const root = isDesktop ? document.getElementById('pjd') : document.getElementById('pj');
+      
+      const v = document.getElementById(isDesktop ? 'rcid' : 'rci').value.trim();
+      const dotPrefix = isDesktop ? 'dd' : 'd';
+      
+      const playerNameObj = root.querySelector('.fi');
+      const playerName = playerNameObj ? playerNameObj.value.trim() : '';
 
-    function doJoinDesktop(btn) {
-      const v = document.getElementById('rcid').value.trim();
+      const avatarOpt = root.querySelector('.ava-opt.active');
+      const avatarStr = avatarOpt ? avatarOpt.innerText.trim() : '👻';
+      
+      if(!playerName) {
+          toast('⚠️ Please enter your name!');
+          return;
+      }
+
       if (v.length < 6) {
-        [0, 1, 2, 3, 4, 5].forEach(i => { const d = document.getElementById('dd' + i); d.classList.add('err'); setTimeout(() => d.classList.remove('err'), 600) });
+        [0, 1, 2, 3, 4, 5].forEach(i => { const d = document.getElementById(dotPrefix + i); d.classList.add('err'); setTimeout(() => d.classList.remove('err'), 600) });
         toast('⚠️ Enter a valid 6-character code!'); return;
       }
+      
+      if (window.playCreate) window.playCreate();
       btn.disabled = true;
-      document.getElementById('bjndi').textContent = '⏳'; document.getElementById('bjndt').textContent = 'Joining...';
-      setTimeout(() => {
-        btn.disabled = false;
-        document.getElementById('bjndi').textContent = '→'; document.getElementById('bjndt').textContent = 'Enter Room';
-        toast('✅ Joined! Waiting for host...');
-      }, 1500);
+      const bText = document.getElementById(isDesktop ? 'bjndt' : 'bjnt');
+      const bIcon = document.getElementById(isDesktop ? 'bjndi' : 'bjni');
+      
+      bIcon.textContent = '⏳'; bText.textContent = 'Joining...';
+      
+      if (window.GameClient) {
+          window.GameClient.joinRoom(v, playerName, avatarStr, (success, err) => {
+              if (success) {
+                  bIcon.textContent = '→'; bText.textContent = 'Enter Room';
+                  toast('✅ Joined! Waiting for host...');
+                  setTimeout(() => window.location.href = './src/pages/player/player-waiting.html', 1000);
+              } else {
+                  btn.disabled = false;
+                  bIcon.textContent = '→'; bText.textContent = 'Enter Room';
+                  toast('⚠️ ' + (err || 'Room not found!'));
+                  [0, 1, 2, 3, 4, 5].forEach(i => { const d = document.getElementById(dotPrefix + i); d.classList.add('err'); setTimeout(() => d.classList.remove('err'), 600) });
+              }
+          });
+      }
+    }
+    
+    function doJoinDesktop(btn) {
+        doJoin(btn);
     }
 
     /* ── CLICK PARTICLES ── */
@@ -188,4 +261,42 @@
         // Cleanup wrapper
         setTimeout(() => p.remove(), 550);
       }
+    });
+
+    /* ── URL PARSING ── */
+    window.addEventListener('DOMContentLoaded', () => {
+       const params = new URLSearchParams(window.location.search);
+       const roomCode = params.get('room');
+       if(roomCode && roomCode.length === 6) {
+           switchTab('join');
+           
+           // Hide Host/Tabs entirely
+           const tabs = document.querySelector('.tabs');
+           if (tabs) tabs.style.display = 'none';
+           
+           const ordiv = document.querySelector('.ordiv');
+           if (ordiv) ordiv.style.display = 'none';
+
+           const rci = document.getElementById('rci');
+           if(rci) {
+               rci.value = roomCode;
+               rci.dispatchEvent(new Event('input')); // fire dot updates
+               rci.closest('.field').style.display = 'none';
+           }
+           const d0 = document.getElementById('d0');
+           if (d0) d0.parentElement.style.display = 'none';
+           
+           const rcid = document.getElementById('rcid');
+           if(rcid) {
+               rcid.value = roomCode;
+               rcid.dispatchEvent(new Event('input'));
+               rcid.closest('.field').style.display = 'none';
+           }
+           const dd0 = document.getElementById('dd0');
+           if (dd0) dd0.parentElement.style.display = 'none';
+           
+           // Force only JOIN card to show
+           const ph = document.getElementById('ph');
+           if (ph) ph.style.display = 'none';
+       }
     });

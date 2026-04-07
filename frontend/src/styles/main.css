@@ -797,6 +797,20 @@
       scrollbar-width: none;
     }
     .ava-sel::-webkit-scrollbar { display: none; }
+    /* CSS overrides for direct link join */
+    body.link-join-mode .tabs,
+    body.link-join-mode #ph,
+    body.link-join-mode .ordiv,
+    body.link-join-mode .rstrip {
+      display: none !important;
+    }
+    body.link-join-mode .crow {
+      justify-content: center;
+    }
+    body.link-join-mode .card.cj {
+      max-width: 400px;
+      margin: 0 auto;
+    }
     .ava-opt {
       font-size: 22px;
       width: 40px;
@@ -959,4 +973,22 @@ button, a, .btn, .chip, .hr-mode-opt, .fi, .tb, .card, select, input[type="text"
 @keyframes explode {
   0% { transform: translate(0, 0) scale(1); opacity: 1; }
   100% { transform: translate(var(--dx), var(--dy)) scale(0) rotate(45deg); opacity: 0; }
+}
+
+/* ── ANTICHEAT ── */
+body {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+input, textarea {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
+}
+.blurred-screen {
+  filter: blur(15px) grayscale(100%);
+  pointer-events: none;
 }

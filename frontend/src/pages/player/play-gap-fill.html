@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Gap-Fill Test Interface - Grammar & Vocab Betting Battle</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="./player-layout.css">
+  <link rel="stylesheet" href="../../styles/items.css">
+</head>
+
+<body>
+  <!-- Global Canvas/Background -->
+  <canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pt"></div>
+
+  <div class="page">
+    <div class="hero">
+      <div class="live-badge">
+        <div class="ldot"></div>
+        TEST MODE
+      </div>
+      <h1 class="gtitle">Gap-Fill <span class="w-gold">Test</span></h1>
+      <p class="tsub">Previewing extracted questions from SUMMIT 1 U5</p>
+    </div>
+
+    <!-- Main Container -->
+    <div class="test-container" id="gf-container">
+      <div class="question-card" style="border-color: rgba(251, 191, 36, 0.15); position: relative; overflow: hidden;">
+        
+        <!-- Unified Timer Bar -->
+        <div id="unified-timer-wrap" style="position: absolute; top: 0; left: 0; right: 0; height: 8px; background: rgba(0,0,0,0.05); z-index: 60; display: none;">
+           <div id="unified-timer-fill" style="height: 100%; width: 100%; background: linear-gradient(90deg, #FCD34D, #F59E0B); transition: width 1s linear;"></div>
+        </div>
+
+        <!-- Pre-Question Betting Phase -->
+        <div class="betting-phase-overlay" id="bettingPhase">
+          <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
+          <h2 style="font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--ink); margin-bottom: 10px;">Place Your Bet!</h2>
+          <p style="color:var(--ink3); font-weight:700; margin-bottom:24px;">Lock in your bet before facing the question!</p>
+          
+          <div class="bet-widget">
+            <div class="bet-header">🪙 Bet Points</div>
+            <div class="bet-input-wrap">
+              <input type="number" class="bet-input" id="gf-bet-input" placeholder="0" min="0">
+              <div class="bet-quick-btns">
+                <button class="bet-btn" onclick="document.getElementById('gf-bet-input').value=10; if(window.playClick) window.playClick();">10</button>
+                <button class="bet-btn" onclick="document.getElementById('gf-bet-input').value=30; if(window.playClick) window.playClick();">30</button>
+                <button class="bet-btn" onclick="document.getElementById('gf-bet-input').value=parseInt(document.getElementById('score').innerText) || 50; if(window.playClick) window.playClick();">ALL</button>
+              </div>
+            </div>
+          </div>
+
+          <button class="btn bh" style="width: 100%; max-width: 300px; padding: 18px; border-radius: 20px; font-size: 18px; box-shadow: 0 10px 30px rgba(16,185,129,0.3)" onclick="confirmBetAction()">🔒 Confirm Bet</button>
+        </div>
+        <!-- Question Badge -->
+        <div class="q-badge" id="q-counter" style="background: linear-gradient(135deg, var(--gold), var(--gold2)); box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);">
+          Q 1 / 20
+        </div>
+
+        <!-- Question Text -->
+        <h2 class="q-text" id="q-text" style="margin-bottom: 10px;">Loading question...</h2>
+
+        <div style="font-family: 'Nunito', sans-serif; font-size: 15px; color: var(--ink3); margin-bottom: 20px;">
+          Type your answer below and click submit or press Enter.
+        </div>
+
+        <input type="text" id="gf-input" class="gap-fill-input" placeholder="Type your answer here..." autocomplete="off">
+
+        <button class="btn bj" id="submit-btn" style="width: 100%; height: 56px; font-size: 18px; border-radius: 16px;" onclick="checkGapFill()">Check Answer</button>
+
+        <div class="feedback-msg" id="feedback-msg"></div>
+
+        <!-- Desktop Inventory Container -->
+        <div id="desktopInventory" class="desktop-inventory desktop-only">
+          <div class="desktop-inv-slot empty-slot">Empty Slot</div>
+          <div class="desktop-inv-slot empty-slot">Empty Slot</div>
+          <div class="desktop-inv-slot empty-slot">Empty Slot</div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="test-nav">
+          <div class="score-hud">Score: <span id="score">0</span></div>
+          <button class="btn bh" id="next-btn" style="width: 140px; display: none;">Next &rarr;</button>
+        </div>
+      </div>
+
+      <div class="bottom" style="margin-top: 20px;">
+        <button class="chip" onclick="window.location.href='mcq-test.html'">Switch to MCQ Test</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../../scripts/socket-client.js"></script>
+  <script src="../../scripts/sfx.js"></script>
+  <script src="../../scripts/main.js"></script>
+  <script src="../../scripts/anticheat.js"></script>
+  <script src="../../scripts/items.js"></script>
+  <script src="./play-gap-fill.js"></script>
+  <script>
+     function confirmBetAction() {
+         const bet = parseInt(document.getElementById('gf-bet-input').value) || 0;
+         if (window.GameClient) {
+             window.GameClient.submitBet(bet);
+             if(window.GameClient.isLeader) {
+                document.getElementById('bettingPhase').classList.add('hidden');
+                if(window.playSuccess) window.playSuccess();
+                document.getElementById('gf-input').focus();
+             } else {
+                 toast("Only the Team Leader can lock the bet!");
+             }
+         } else {
+             document.getElementById('bettingPhase').classList.add('hidden');
+             if(window.playSuccess) window.playSuccess();
+             document.getElementById('gf-input').focus();
+         }
+     }
+     
+     const origSubmit = window.checkGapFill;
+     window.checkGapFill = function() {
+         if (origSubmit) origSubmit();
+         if (window.GameClient) {
+             const ansText = document.getElementById('gf-input').value.trim();
+             window.GameClient.submitAnswer(ansText);
+         }
+     };
+
+     document.getElementById('gf-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            window.checkGapFill();
+        }
+     });
+
+     window.addEventListener('gameStateUpdate', (e) => {
+         const state = e.detail;
+         
+         // Sync question
+         if (window.loadQuestionFromState && state.currentQuestionIdx !== undefined) {
+             window.loadQuestionFromState(state.currentQuestionIdx);
+         }
+         
+         // Sync Score
+         const teamInfo = state.teams.find(t => t.id === window.GameClient.team);
+         if (teamInfo) {
+             document.getElementById('score').innerText = teamInfo.score;
+         }
+
+         // Visibility Logic
+         if(state.state === 'BETTING') {
+             document.getElementById('q-text').style.visibility = 'hidden';
+             document.getElementById('gf-input').style.visibility = 'hidden';
+             document.getElementById('submit-btn').style.visibility = 'hidden';
+
+             document.getElementById('bettingPhase').classList.remove('hidden');
+             const team = state.teams.find(t => t.id === window.GameClient.team);
+             if (team && team.hasBet) {
+                  document.getElementById('bettingPhase').classList.add('hidden');
+             }
+         } else if (state.state === 'QUESTION' || state.state === 'ROUND_RESULT') {
+             document.getElementById('q-text').style.visibility = 'visible';
+             document.getElementById('gf-input').style.visibility = 'visible';
+             document.getElementById('submit-btn').style.visibility = 'visible';
+             
+             document.getElementById('bettingPhase').classList.add('hidden');
+         }
+     });
+
+     let questionTimerInt = null;
+     window.addEventListener('timerSync', (e) => {
+         const data = e.detail;
+         if (data.phase === 'BETTING' || data.phase === 'QUESTION') {
+             const maxTime = data.seconds || 30;
+             let currentSeconds = data.seconds;
+             
+             document.getElementById('unified-timer-wrap').style.display = 'block';
+             document.getElementById('unified-timer-fill').style.width = '100%';
+             document.getElementById('unified-timer-fill').style.background = data.phase === 'BETTING' ? 'linear-gradient(90deg, #FCD34D, #F59E0B)' : 'linear-gradient(90deg, #38BDF8, #34D399)';
+
+             if(questionTimerInt) clearInterval(questionTimerInt);
+             questionTimerInt = setInterval(() => {
+                 currentSeconds--;
+                 
+                 // Tick if 5 seconds or less remaining
+                 if(currentSeconds <= 5 && currentSeconds > 0) {
+                     if(window.playTick) window.playTick();
+                 }
+
+                 if(currentSeconds <= 0) {
+                     clearInterval(questionTimerInt);
+                     document.getElementById('unified-timer-wrap').style.display = 'none';
+                 } else {
+                     document.getElementById('unified-timer-fill').style.width = ((currentSeconds / maxTime) * 100) + '%';
+                 }
+             }, 1000);
+         } else {
+             if (questionTimerInt) clearInterval(questionTimerInt);
+             document.getElementById('unified-timer-wrap').style.display = 'none';
+         }
+     });
+  </script>
+</body>
+
+</html>

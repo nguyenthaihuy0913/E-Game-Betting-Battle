@@ -12,6 +12,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     let score = 0;
     let isAnswered = false;
 
+    // Expose loadQuestion to window for server sync
+    window.loadQuestionFromState = function(idx) {
+        if (currentIdx !== idx || isAnswered === false) { 
+            currentIdx = idx;
+            if (questions.length > 0 && idx < questions.length) {
+                loadQuestion(currentIdx);
+            }
+        }
+    };
+
     // Fetch data
     try {
         const res = await fetch('../../data/questions.json');
@@ -19,6 +29,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         questions = data.gap_fill || [];
         if (questions.length > 0) {
             loadQuestion(currentIdx);
+            
+            // Default to hiding the question unless told otherwise
+            qText.style.visibility = 'hidden';
+            gfInput.style.visibility = 'hidden';
+            submitBtn.style.visibility = 'hidden';
         } else {
             qText.innerText = "No questions found.";
         }
@@ -57,6 +72,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const correctAnswer = questions[currentIdx].correct_answer.toLowerCase();
 
         if (userAnswer === correctAnswer) {
+            if (window.playSuccess) window.playSuccess();
             gfInput.className = "gap-fill-input success";
             feedbackMsg.innerText = "Perfect! Right on the mark.";
             feedbackMsg.classList.add('show', 'correct');
@@ -64,16 +80,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             scoreSpan.innerText = score;
             createParticles();
         } else {
+            if (window.playError) window.playError();
             gfInput.className = "gap-fill-input error";
             feedbackMsg.innerHTML = `Incorrect. The correct answer is:<br><strong>${questions[currentIdx].correct_answer}</strong>`;
             feedbackMsg.classList.add('show', 'wrong');
         }
 
-        if (currentIdx < questions.length - 1) {
-            nextBtn.style.display = "flex";
-        } else {
-            feedbackMsg.innerText += " Test Complete!";
-        }
+        // Let server handle 'Next' transitions
+        nextBtn.style.display = "none";
     }
 
     submitBtn.addEventListener('click', handleSubmit);
@@ -84,10 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    nextBtn.addEventListener('click', () => {
-        currentIdx++;
-        loadQuestion(currentIdx);
-    });
+
 
     // Particle effect hook
     function createParticles() {

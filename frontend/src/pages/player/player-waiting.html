@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Waiting Lobby · Betting Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles/main.css" />
+  <style>
+    /* Unique Waiting Stage Styles */
+    .pw-page { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; z-index: 10; padding: 20px; font-family: 'Nunito', sans-serif;}
+    .pw-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 40px; border-radius: 28px; box-shadow: 0 16px 40px rgba(0,0,0,0.1); border: 2px solid #fff; max-width: 400px; width: 100%; text-align: center; }
+    .pw-icon { font-size: 60px; margin-bottom: 15px; animation: float 3s ease-in-out infinite; display: inline-block;}
+    .pw-title { font-family: 'Fredoka One', cursive; font-size: 26px; color: var(--ink); margin-bottom: 10px; }
+    .pw-desc { color: var(--ink3); font-weight: 700; font-size: 15px; line-height: 1.5; }
+    
+    .pw-team-box { display: none; margin-top: 25px; padding: 20px; border-radius: 16px; background: linear-gradient(135deg, #F0F9FF, #E0F2FE); border: 2px dashed #BAE6FD; }
+    .pw-team-title { font-family: 'Fredoka One', cursive; font-size: 22px; color: #0284C7; margin-bottom: 5px; }
+    .pw-team-members { color: #0C4A6E; font-size: 14px; font-weight: 800;}
+    
+    /* Progress Bar */
+    .pw-progress-wrap { width: 100%; height: 12px; background: #E2EDF5; border-radius: 10px; margin-top: 30px; overflow: hidden; position: relative; display: none; }
+    .pw-progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #38BDF8, #34D399); border-radius: 10px; transition: width 1s linear; }
+    .pw-progress-text { font-family: 'Fredoka One', cursive; color: #0EA5E9; font-size: 18px; margin-top: 10px; display: none; }
+
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    @keyframes pulse-team { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+  </style>
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pts"></div>
+
+  <div class="pw-page">
+    <div class="pw-card" id="waitingCard">
+      <div class="pw-icon" id="mainIcon">⏳</div>
+      <div class="pw-title" id="mainTitle">You're In!</div>
+      <div class="pw-desc" id="mainDesc">Look at the classroom screen! We are waiting for the Host to start the game.</div>
+      
+      <div class="pw-team-box" id="teamBox">
+          <div class="pw-team-title" id="teamName">Team X</div>
+          <div class="pw-team-members" id="teamRole" style="margin-bottom: 10px;">Your Role: Member</div>
+          
+          <!-- Live Roster -->
+          <div id="teamRoster" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
+          </div>
+      </div>
+      
+      <div class="pw-progress-text" id="progressText">120s</div>
+      <div class="pw-progress-wrap" id="progressWrap">
+          <div class="pw-progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../../scripts/socket-client.js"></script>
+  <script src="../../scripts/sfx.js"></script>
+  <script src="../../scripts/main.js"></script>
+  <script>
+      let countdownInt = null;
+      
+      window.addEventListener('gameStateUpdate', (e) => {
+          const state = e.detail;
+          
+          if(state.state === 'TEAM_FORMATION') {
+             // Host just started, teams are assigned
+             const myTeam = state.teams.find(t => t.id === window.GameClient.team);
+             if (myTeam) {
+                 document.getElementById('mainIcon').innerText = '🤝';
+                 document.getElementById('mainIcon').style.animation = 'pulse-team 2s infinite';
+                 document.getElementById('mainTitle').innerText = 'Find Your Team!';
+                 document.getElementById('mainDesc').innerText = 'Quickly move and sit with your assigned teammates! Time is running out.';
+                 
+                 document.getElementById('teamBox').style.display = 'block';
+                 document.getElementById('teamName').innerText = `Team ${myTeam.id} (Score: ${myTeam.score})`;
+                 document.getElementById('teamRole').innerText = window.GameClient.isLeader ? `👑 You are the LEADER!` : `Member`;
+                 
+                 // Populate Roster
+                 const myTeammates = state.players.filter(p => p.team === myTeam.id);
+                 const rosterHtml = myTeammates.map(m => {
+                     const isMe = m.id === window.GameClient.playerId ? ' (You)' : '';
+                     const leaderCrown = m.isLeader ? '👑 ' : '';
+                     return `<div style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.6); padding: 5px 15px; border-radius: 8px; font-weight: 700; color: #0369a1;">
+                               <span style="font-size: 20px; margin-right: 8px;">${m.avatar || '👻'}</span> 
+                               ${leaderCrown}${m.name}${isMe}
+                             </div>`;
+                 }).join('');
+                 document.getElementById('teamRoster').innerHTML = rosterHtml;
+             }
+          }
+          
+          if(state.state === 'BETTING') {
+              // Time to jump to the actual game
+              window.location.href = './play-mcq.html';
+          }
+      });
+      
+      window.addEventListener('timerSync', (e) => {
+          const data = e.detail;
+          // When timer starts for TEAM_FORMATION
+          if(data.phase === 'TEAM_FORMATION') {
+              const maxTime = data.seconds || 60;
+              let currentSeconds = data.seconds;
+              
+              document.getElementById('progressWrap').style.display = 'block';
+              document.getElementById('progressText').style.display = 'block';
+              document.getElementById('progressText').innerText = currentSeconds + 's';
+              document.getElementById('progressFill').style.width = ((currentSeconds / maxTime) * 100) + '%';
+              
+              if(countdownInt) clearInterval(countdownInt);
+              countdownInt = setInterval(() => {
+                 currentSeconds--;
+                 if(currentSeconds <= 0) {
+                     clearInterval(countdownInt);
+                 } else {
+                     document.getElementById('progressText').innerText = currentSeconds + 's';
+                     document.getElementById('progressFill').style.width = ((currentSeconds / maxTime) * 100) + '%';
+                 }
+              }, 1000);
+          }
+      });
+  </script>
+</body>
+</html>

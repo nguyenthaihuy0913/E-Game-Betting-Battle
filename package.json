@@ -1,0 +1,26 @@
+{
+  "name": "e-game-betting-battle",
+  "version": "1.0.0",
+  "description": "Project xây dựng trò chơi điện tử giúp ôn tập từ vựng cho bài thi cuối kỳ môn Summit 1.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenthaihuy0913/E-Game-Betting-Battle.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/nguyenthaihuy0913/E-Game-Betting-Battle/issues"
+  },
+  "homepage": "https://github.com/nguyenthaihuy0913/E-Game-Betting-Battle#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "socket.io": "^4.8.3"
+  }
+}

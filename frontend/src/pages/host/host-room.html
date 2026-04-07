@@ -51,60 +51,21 @@
 
               <!-- Room Code Box -->
               <div class="hr-code-box">
-                <div class="hr-code-text" id="roomCodeTxt">X K 7 M 2 Q</div>
-                <button class="hr-copy-btn" onclick="copyToClipboard('XK7M2Q', this)">Copy</button>
+                <div class="hr-code-text" id="roomCodeTxt">...</div>
+                <button class="hr-copy-btn" onclick="copyToClipboard(document.getElementById('roomCodeTxt').innerText.replace(/\s+/g, ''), this)">Copy</button>
               </div>
 
               <!-- Link Box -->
               <div class="hr-link-box">
-                <div class="hr-link-text">https://game.example.com/join/XK7M2Q</div>
-                <button class="hr-copy-btn" onclick="copyToClipboard('https://game.example.com/join/XK7M2Q', this)">Copy Link</button>
+                <div class="hr-link-text" id="roomLinkTxt">...</div>
+                <button class="hr-copy-btn" onclick="copyToClipboard(document.getElementById('roomLinkTxt').innerText, this)">Copy Link</button>
               </div>
             </div>
           </div>
-
-          <!-- Settings Card -->
-          <div class="card ch card-slim">
-            <div class="cbar"></div>
-            <div class="chead" style="margin-bottom: 20px;">
-              <div class="cion">⚙️</div>
-              <div>
-                <div class="ctitle">Team Settings</div>
-                <div class="cdesc">Choose how players are assigned to teams</div>
-              </div>
-            </div>
-
-            <div class="hr-settings">
-              <div class="hr-mode-opt active" onclick="selectMode(this)">
-                <div class="hr-mode-radio"></div>
-                <div class="hr-mode-info">
-                  <div class="hr-mode-title">🎲 Random Assignment</div>
-                  <div class="hr-mode-desc">Auto-assign equally to available teams</div>
-                </div>
-              </div>
-
-              <div class="hr-mode-opt" onclick="selectMode(this)">
-                <div class="hr-mode-radio"></div>
-                <div class="hr-mode-info">
-                  <div class="hr-mode-title">🙋 Player Selection</div>
-                  <div class="hr-mode-desc">Players pick their own team upon joining</div>
-                </div>
-              </div>
-
-              <div class="hr-mode-opt" onclick="selectMode(this)">
-                <div class="hr-mode-radio"></div>
-                <div class="hr-mode-info">
-                  <div class="hr-mode-title">👑 Host Manual</div>
-                  <div class="hr-mode-desc">You manually assign players to teams</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
 
-        <!-- Right Column: Participants List -->
-        <div class="card cj card-slim" style="height: 100%; display: flex; flex-direction: column;">
+        <!-- Center Column: Participants List -->
+        <div class="card cj card-slim hr-center-col" style="height: 100%; display: flex; flex-direction: column;">
           <div class="cbar"></div>
           
           <div class="hr-players-head">
@@ -115,21 +76,11 @@
                  <div class="cdesc">People currently in the lobby</div>
                </div>
              </div>
-             <div class="hr-count">5 / 40</div>
+             <div class="hr-count">0 / 40</div>
           </div>
 
-          <div class="hr-players-grid" style="flex: 1;">
-            <!-- Mock Players -->
-            <div class="hr-player-chip"><div class="hr-avatar">🦁</div><div class="hr-name">Minh Anh</div></div>
-            <div class="hr-player-chip"><div class="hr-avatar">🦊</div><div class="hr-name">Tuan Dat</div></div>
-            <div class="hr-player-chip"><div class="hr-avatar">🐼</div><div class="hr-name">Ngoc Diep</div></div>
-            <div class="hr-player-chip"><div class="hr-avatar">🐯</div><div class="hr-name">Khoa Nam</div></div>
-            <div class="hr-player-chip"><div class="hr-avatar">🦉</div><div class="hr-name">Bao Yen</div></div>
-            <!-- Example of what it looks like with more players -->
-            <!--
-            <div class="hr-player-chip"><div class="hr-avatar">🐸</div><div class="hr-name">Duc Hai</div></div>
-            <div class="hr-player-chip"><div class="hr-avatar">🐰</div><div class="hr-name">Thu Ha</div></div>
-            -->
+          <div class="hr-players-grid" id="playersGrid" style="flex: 1;">
+             <!-- Dynamically populated via Socket.io game_state -->
           </div>
 
           <button class="btn hr-launch-btn" onclick="launchGame()">
@@ -157,9 +108,47 @@
   <!-- Global Toast -->
   <div class="toast" id="toast"></div>
   
-  <!-- Canvas background script reused -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../../scripts/socket-client.js"></script>
   <script src="../../scripts/main.js"></script>
-  <!-- Room logic script -->
   <script src="./host-room.js"></script>
+  <script>
+    // Initialize host UI with Room ID
+    setTimeout(() => {
+       const roomId = sessionStorage.getItem('roomId') || 'ERROR';
+       document.getElementById('roomCodeTxt').innerText = roomId.split('').join(' ');
+       const link = window.location.origin + '?room=' + roomId;
+       document.getElementById('roomLinkTxt').innerText = link;
+       
+       // Listen for game state updates
+       window.addEventListener('gameStateUpdate', (e) => {
+           const state = e.detail;
+           const grid = document.getElementById('playersGrid');
+           grid.innerHTML = '';
+           state.players.forEach(p => {
+               const el = document.createElement('div');
+               el.className = 'hr-player-chip';
+               el.innerHTML = `<div class="hr-avatar">🦁</div><div class="hr-name">${p.name}</div>`;
+               grid.appendChild(el);
+           });
+           document.querySelector('.hr-count').innerText = state.players.length + ' / 40';
+           
+           window.currentPlayers = state.players.length;
+           
+           if(state.state === 'TEAM_FORMATION') {
+                window.location.href='./host-dashboard.html';
+           }
+       });
+       
+       window.launchGame = function() {
+           if((window.currentPlayers || 0) < 2) {
+               toast('⚠️ The game requires at least 2 players to start!');
+               return;
+           }
+           if(window.playCreate) window.playCreate();
+           window.GameClient.hostAction('START_MATCHMAKING');
+       };
+    }, 500);
+  </script>
 </body>
 </html>

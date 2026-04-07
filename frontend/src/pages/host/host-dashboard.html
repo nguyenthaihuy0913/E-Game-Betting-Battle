@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Host Dashboard · Betting Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../styles/main.css" />
+  <link rel="stylesheet" href="./host-dashboard.css" />
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pts"></div>
+
+  <div class="page">
+    <div class="hd-page">
+      
+      <!-- Header -->
+      <div class="hd-header">
+        <div class="hd-logo"><span class="w-sky">Host</span> <span class="w-gold">Dashboard</span></div>
+        <div class="hd-status">
+          <div class="hd-status-dot"></div>
+          Match in Progress
+        </div>
+        <button class="btn bj" style="width: auto; padding: 10px 18px; font-size: 15px;" onclick="window.location.href='../../../../../index.html'">🚪 End Game</button>
+      </div>
+
+      <!-- Main Layout Grid -->
+      <div class="hd-grid">
+        
+        <!-- Left Column: Leaderboard -->
+        <div class="card ch card-slim" style="display: flex; flex-direction: column; max-height: 80vh;">
+          <div class="cbar"></div>
+          
+          <div class="hd-panel-head">
+             <div class="chead">
+               <div class="cion">🏅</div>
+               <div>
+                 <div class="ctitle">Live Leaderboard</div>
+                 <div class="cdesc">Team standings and current points</div>
+               </div>
+             </div>
+          </div>
+
+          <div class="hd-leaderboard" id="leaderboardList">
+             <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Right Column: Anticheat & Controls -->
+        <div class="hd-right">
+          
+          <!-- Anticheat Monitors -->
+          <div class="card cj card-slim mb-20">
+            <div class="cbar" style="background: linear-gradient(90deg, #E63946, #FB7185, #E63946); animation: bs 2s linear infinite;"></div>
+            <div class="chead" style="margin-bottom: 15px;">
+              <div class="cion" style="background: #FFE4E6; color: #E63946;">🚨</div>
+              <div>
+                <div class="ctitle" style="color: #E63946;">Cheat Detector</div>
+                <div class="cdesc">Violations reported by the system</div>
+              </div>
+            </div>
+
+            <div class="hd-logs" id="anticheatLogs">
+              <div class="hd-empty-log" id="emptyLogMsg">No violations detected yet.</div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="card ch card-slim">
+            <div class="cbar"></div>
+            <div class="chead" style="margin-bottom: 20px;">
+              <div class="cion">⚡</div>
+              <div>
+                <div class="ctitle">Match Controls</div>
+                <div class="cdesc">Manage current round state</div>
+              </div>
+            </div>
+            
+            <div class="hd-controls">
+                <div class="hd-control-stat">
+                    <span>Current Round</span>
+                    <strong id="hd-round">Waiting...</strong>
+                </div>
+                <div class="hd-control-stat">
+                    <span>Teams Alive</span>
+                    <strong id="hd-alive">7 / 7</strong>
+                </div>
+                <button class="btn pb" style="background: #E2EDF5; color: var(--ink); margin-top: 5px;" onclick="window.GameClient.hostAction('FORCE_START_GAME')">Skips Waiting Phase / Force Start</button>
+                <button class="btn pb" style="background: #FFE4E6; color: #E63946; margin-top: 5px;" onclick="window.GameClient.hostAction('NEXT_QUESTION')">Force Next Question</button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../../scripts/socket-client.js"></script>
+  <script src="../../scripts/sfx.js"></script>
+  <script src="../../scripts/main.js"></script>
+  <script>
+    setTimeout(() => {
+        const lb = document.getElementById('leaderboardList');
+        
+        window.addEventListener('gameStateUpdate', (e) => {
+            const state = e.detail;
+            document.getElementById('hd-round').innerText = 'Phase: ' + state.state + ' (Round ' + state.round + ')';
+            
+            // Sort teams by score DESC
+            const sorted = [...state.teams].sort((a,b) => b.score - a.score);
+            lb.innerHTML = '';
+            
+            sorted.forEach((t, i) => {
+                if(t.memberCount === 0) return; // skip empty teams
+                
+                const el = document.createElement('div');
+                el.className = `hd-team-row rank-${i+1}`;
+                el.innerHTML = `
+                    <div class="hd-team-info">
+                        <div class="hd-team-rank">#${i + 1}</div>
+                        <div>
+                            <div class="hd-team-name">Team ${t.id}</div>
+                            <div style="font-size: 11px; color: var(--ink3); font-weight: 700; margin-top:2px;">
+                                ${t.memberCount} Mems • ${t.hasAnswered ? '✅ Answered' : (t.hasBet ? '💰 Bet Placed' : '⏳ Waiting')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hd-team-points">
+                        ${t.score} <span style="font-size: 14px; filter: grayscale(1);">🪙</span>
+                    </div>
+                `;
+                lb.appendChild(el);
+            });
+            
+        });
+        
+        window.addEventListener('cheatAlert', (e) => {
+            const alert = e.detail;
+            const logBox = document.getElementById('anticheatLogs');
+            const emptyMsg = document.getElementById('emptyLogMsg');
+            if(emptyMsg) emptyMsg.style.display = 'none';
+            
+            const li = document.createElement('div');
+            li.className = 'hd-log-item';
+            
+            const time = new Date(alert.time).toLocaleTimeString();
+            li.innerHTML = `
+              <div class="hd-log-time">${time}</div>
+              <div class="hd-log-msg"><strong>${alert.playerName}</strong> (Team ${alert.team}): <span style="color:#E63946">${alert.reason}</span></div>
+            `;
+            logBox.prepend(li);
+        });
+        
+    }, 500);
+  </script>
+</body>
+</html>

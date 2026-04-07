@@ -1,0 +1,218 @@
+/* Host Dashboard Styles */
+
+.hd-page {
+  width: 100%;
+  max-width: 1000px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  opacity: 0;
+  animation: fu 0.7s 0.1s ease forwards;
+}
+
+.hd-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+  padding: 12px 20px;
+  border-radius: 18px;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid rgba(14, 165, 233, 0.1);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hd-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 24px;
+}
+
+.hd-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  color: #059669;
+  background: #D1FAE5;
+  padding: 6px 14px;
+  border-radius: 99px;
+}
+
+.hd-status-dot {
+  width: 8px;
+  height: 8px;
+  background: #10B981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5);
+  animation: pulse-green 1.5s infinite;
+}
+
+@keyframes pulse-green {
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.hd-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 15px;
+}
+
+@media (min-width: 768px) {
+  .hd-grid {
+    grid-template-columns: 5fr 4fr;
+  }
+}
+
+.hd-left, .hd-right {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.card-slim {
+  padding: 20px;
+  margin-bottom: 0px;
+}
+
+.mb-20 {
+  margin-bottom: 15px;
+}
+
+.hd-panel-head {
+  padding-bottom: 15px;
+  border-bottom: 1.5px dashed #E2EDF5;
+  margin-bottom: 15px;
+}
+
+/* Leaderboard */
+.hd-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.hd-team-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 15px;
+  background: #F8FBFE;
+  border: 1.5px solid #E2EDF5;
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hd-team-row:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.1);
+  border-color: var(--sky);
+}
+
+.hd-team-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.hd-team-rank {
+  font-family: 'Fredoka One', cursive;
+  font-size: 18px;
+  color: var(--ink3);
+  width: 24px;
+}
+
+.hd-team-name {
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--ink);
+}
+
+.hd-team-points {
+  font-family: 'Fredoka One', cursive;
+  font-size: 20px;
+  color: var(--gold2);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Specific ranks */
+.rank-1 .hd-team-rank { color: #F59E0B; }
+.rank-1 .hd-team-row { background: #FEF3C7; border-color: #FCD34D; }
+.rank-2 .hd-team-rank { color: #94A3B8; }
+.rank-3 .hd-team-rank { color: #B45309; }
+
+/* Logs */
+.hd-logs {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.hd-empty-log {
+  text-align: center;
+  padding: 20px;
+  font-size: 14px;
+  color: var(--ink3);
+  font-weight: 600;
+}
+
+.hd-log-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  background: #FFF0F0;
+  border: 1px solid #FECDD3;
+  border-radius: 8px;
+  animation: fu 0.3s ease;
+}
+
+.hd-log-time {
+  font-size: 10px;
+  color: var(--coral);
+  font-weight: 800;
+  margin-top: 2px;
+  min-width: 45px;
+}
+
+.hd-log-msg {
+  font-size: 13px;
+  font-weight: 700;
+  color: #9F1239;
+  line-height: 1.4;
+}
+
+/* Controls */
+.hd-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hd-control-stat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #F8FBFE;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.hd-control-stat span {
+  color: var(--ink3);
+  font-weight: 700;
+}
+
+.hd-control-stat strong {
+  color: var(--ink);
+  font-weight: 900;
+}
