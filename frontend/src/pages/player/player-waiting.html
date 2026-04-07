@@ -42,7 +42,6 @@
           <div class="pw-team-title" id="teamName">Team X</div>
           <div class="pw-team-members" id="teamRole" style="margin-bottom: 10px;">Your Role: Member</div>
           
-          <!-- Live Roster -->
           <div id="teamRoster" style="margin-top: 15px; display: flex; flex-direction: column; gap: 8px;">
           </div>
       </div>
@@ -66,6 +65,14 @@
       window.addEventListener('gameStateUpdate', (e) => {
           const state = e.detail;
           
+          // --- ĐOẠN CODE CẬP NHẬT ĐỘI TỰ ĐỘNG ---
+          const me = state.players.find(p => p.id === window.GameClient.playerId);
+          if (me) {
+              window.GameClient.team = me.team;
+              window.GameClient.isLeader = me.isLeader;
+          }
+          // -------------------------------------
+
           if(state.state === 'TEAM_FORMATION') {
              // Host just started, teams are assigned
              const myTeam = state.teams.find(t => t.id === window.GameClient.team);

@@ -1,73 +1,78 @@
-// Host Dashboard Logic
+// Host Dashboard Logic - Chuyên xử lý Hiệu ứng UI & Âm thanh
+// Dữ liệu thời gian thực đã được xử lý bằng WebSocket trong file HTML.
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("🎬 Host Dashboard Active - Real-time UI & SFX Engine Ready!");
     
-    // Mock Teams Data - Exactly 7 Teams
-    const teamsData = [
-        { id: 1, name: "Team Alphas", points: 250, rank: 1 },
-        { id: 2, name: "Team Bravo", points: 210, rank: 2 },
-        { id: 3, name: "Grammar Gods", points: 180, rank: 3 },
-        { id: 4, name: "Vocab Victors", points: 150, rank: 4 },
-        { id: 5, name: "The Thinkers", points: 120, rank: 5 },
-        { id: 6, name: "Summit Stars", points: 90, rank: 6 },
-        { id: 7, name: "Last Hope", points: 50, rank: 7 }
-    ];
+    let previousState = '';
 
-    const leaderboardEl = document.getElementById('leaderboardList');
-    
-    function renderLeaderboard() {
-        leaderboardEl.innerHTML = '';
-        teamsData.sort((a,b) => b.points - a.points);
+    // =========================================================
+    // 1. HIỆU ỨNG KHI TRẠNG THÁI GAME THAY ĐỔI
+    // =========================================================
+    window.addEventListener('gameStateUpdate', (e) => {
+        const state = e.detail;
         
-        teamsData.forEach((t, index) => {
-            let item = document.createElement('div');
-            item.className = `hd-team-row rank-${index + 1}`;
-            item.innerHTML = `
-                <div class="hd-team-info">
-                    <div class="hd-team-rank">#${index + 1}</div>
-                    <div class="hd-team-name">${t.name}</div>
-                </div>
-                <div class="hd-team-points">
-                    ${t.points} <span style="font-size: 14px; filter: grayscale(1);">🪙</span>
-                </div>
-            `;
-            leaderboardEl.appendChild(item);
-        });
-    }
-
-    renderLeaderboard();
-
-    // Mock Anticheat Logs
-    const mockViolations = [
-        { time: "10:24", msg: "<strong>Minh Anh (Team Alphas)</strong> detected switching tabs during question 3." },
-        { time: "10:27", msg: "<strong>Khoa Nam (Vocab Victors)</strong> triggered screen blur / snipping tool prevention." },
-        { time: "10:31", msg: "<strong>Duc Hai (The Thinkers)</strong> attempted to open Developer Tools." }
-    ];
-
-    const logsContainer = document.getElementById('anticheatLogs');
-    const emptyMsg = document.getElementById('emptyLogMsg');
-
-    function injectMockLogs() {
-        let currentLogs = [];
-        
-        function addLog(logObj) {
-            emptyMsg.style.display = 'none';
-            if (window.playError) window.playError(); // play buzz sound on cheat detection
+        // Chỉ chạy hiệu ứng khi state thực sự chuyển sang giai đoạn mới
+        if (previousState !== state.state) {
             
-            let logEl = document.createElement('div');
-            logEl.className = 'hd-log-item';
-            logEl.innerHTML = `
-                <div class="hd-log-time">${logObj.time}</div>
-                <div class="hd-log-msg">${logObj.msg}</div>
-            `;
-            logsContainer.insertBefore(logEl, logsContainer.firstChild);
+            // TRƯỜNG HỢP 1: Chốt điểm - Hiển thị kết quả (ROUND_RESULT)
+            if (state.state === 'ROUND_RESULT') {
+                // Phát âm thanh ting ting / Tada chốt điểm
+                if (typeof window.playSuccess === 'function') window.playSuccess();
+                
+                // Bảng xếp hạng lóe sáng ánh Vàng (Gold) cực rực rỡ
+                const leaderboardCard = document.querySelector('.card.ch');
+                if (leaderboardCard) {
+                    leaderboardCard.style.transition = "box-shadow 0.3s ease-out, transform 0.2s";
+                    leaderboardCard.style.transform = "scale(1.01)";
+                    leaderboardCard.style.boxShadow = "0 0 50px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(251, 191, 36, 0.2)";
+                    
+                    // Trả về bình thường sau 1 giây
+                    setTimeout(() => {
+                        leaderboardCard.style.transform = "scale(1)";
+                        leaderboardCard.style.boxShadow = "none";
+                    }, 1000);
+                }
+            } 
+            
+            // TRƯỜNG HỢP 2: Bắt đầu cho cược hoặc Đếm ngược câu hỏi
+            else if (state.state === 'BETTING' || state.state === 'QUESTION') {
+                // Tiếng click báo hiệu bắt đầu thời gian căng thẳng
+                if (typeof window.playClick === 'function') window.playClick();
+            }
+            
+            previousState = state.state;
         }
+    });
 
-        // Add them one by one to simulate live events
-        setTimeout(() => addLog(mockViolations[0]), 2000);
-        setTimeout(() => addLog(mockViolations[1]), 5500);
-        setTimeout(() => addLog(mockViolations[2]), 12000);
-    }
 
-    injectMockLogs();
+    // =========================================================
+    // 2. HIỆU ỨNG KHI CÓ ĐỘI GIAN LẬN (Cheat Alert)
+    // =========================================================
+    window.addEventListener('cheatAlert', (e) => {
+        // Phát tiếng "Bíp bíp" báo lỗi
+        if (typeof window.playError === 'function') window.playError();
+        
+        // Hộp Cheat Detector giật nảy lên và nháy sáng ĐỎ (Red)
+        const anticheatCard = document.querySelector('.hd-right .card.cj');
+        if (anticheatCard) {
+            // Chỉnh CSS động để nháy đỏ
+            anticheatCard.style.transition = "all 0.1s ease-in-out";
+            anticheatCard.style.transform = "scale(1.03) rotate(1deg)";
+            anticheatCard.style.boxShadow = "0 0 60px rgba(230, 57, 70, 0.9), inset 0 0 30px rgba(230, 57, 70, 0.5)";
+            anticheatCard.style.border = "2px solid #E63946";
+            
+            // Hiệu ứng giật lắc trái phải nhanh (Shake)
+            setTimeout(() => { anticheatCard.style.transform = "scale(1.03) rotate(-1deg)"; }, 50);
+            setTimeout(() => { anticheatCard.style.transform = "scale(1.03) rotate(1deg)"; }, 100);
+            setTimeout(() => { anticheatCard.style.transform = "scale(1.03) rotate(-1deg)"; }, 150);
+
+            // Gỡ hiệu ứng sau nửa giây
+            setTimeout(() => {
+                anticheatCard.style.transform = "scale(1) rotate(0)";
+                anticheatCard.style.boxShadow = "none";
+                anticheatCard.style.border = "none";
+            }, 500);
+        }
+    });
 });

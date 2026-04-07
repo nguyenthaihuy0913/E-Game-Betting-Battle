@@ -60,7 +60,14 @@ function confirmLeaveRoom() {
 }
 
 function launchGame() {
-  if (typeof toast === "function") {
-    toast("🚀 Launching Game... (Coming soon)");
+  // Kiểm tra xem đã kết nối với Server chưa
+  if (window.GameClient && window.GameClient.isHost) {
+    if (typeof toast === "function") {
+      toast("🎲 Đang chia đội ngẫu nhiên...");
+    }
+    // Gửi lệnh kích hoạt chia đội (Matchmaking) lên Server
+    window.GameClient.hostAction('START_MATCHMAKING');
+  } else {
+    alert("Lỗi kết nối! Không thể bắt đầu game.");
   }
 }

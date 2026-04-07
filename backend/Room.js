@@ -213,34 +213,40 @@ class Room {
 
     evaluateRound() {
         this.state = 'ROUND_RESULT';
+        // Hệ số nhân điểm theo rank: 1->7
         const multipliers = [2.0, 1.8, 1.6, 1.5, 1.4, 1.3, 1.2];
         
-        const correctAnswer = "A"; // Example mock
+        // Mặc định đang gán cứng là A, bạn cần thay logic đọc đáp án thật từ DB sau nha!
+        const correctAnswer = "A"; 
         
         const activeTeams = Array.from(this.teams.values()).filter(t => t.members.length > 0);
+        
+        // Lọc ra các đội ĐÃ TRẢ LỜI và TRẢ LỜI ĐÚNG
         const answeringTeams = activeTeams.filter(t => t.hasAnswered && (t.lastAnswer === correctAnswer || t.lastAnswer === "mock_correct"));
+        
+        // Xếp hạng tốc độ (Ai có timeTaken nhỏ hơn tức là nhanh hơn -> đứng đầu mảng)
         answeringTeams.sort((a,b) => a.timeTaken - b.timeTaken);
 
         answeringTeams.forEach((t, idx) => {
+            // Lấy hệ số nhân dựa trên thứ hạng
             const multi = multipliers[Math.min(idx, multipliers.length - 1)];
-            // Speed points are calculated as (Bet * (Multi - 1)) + Original Bet
-            const earnings = Math.floor(t.currentBet * multi);
-            t.score += (earnings - t.currentBet); // add profit
-            // Emitting item drop directly to team members
+            
+            // Công thức: Điểm cược * Hệ số -> Cộng thẳng vào điểm của đội
+            const bonus = Math.floor(t.currentBet * multi);
+            t.score += bonus; 
+            
+            // Thả item cho đội
             t.members.forEach(m => {
                if(m.socketId) this.io.to(m.socketId).emit('receive_item')
             });
         });
 
-        // Penalize wrong flags or leave unchannged based on rule "sai thì không cộng điểm, giữ nguyên điểm." -> "Nếu sai thì không cộng điểm, giữ nguyên điểm"
-        // Wait, normally if you bet, you lose it if you're wrong? The rule says "Nếu sai thì không cộng điểm, giữ nguyên điểm". Oh, literally "if wrong, no points added, keep original score". 
-        // This makes it zero risk?? "Đặt cược" implies you lose if wrong. Let's assume standard behavior: if you bet, you risk losing unless "Không cộng điểm, giữ nguyên điểm" literally means you don't lose your bet!
-        // Actually, the user wrote: "Nếu sai thì không cộng điểm, giữ nguyên điểm." I will trust this exactly: 0 profit, 0 loss. 
+        // Nếu trả lời SAI -> Giữ nguyên điểm (không cộng, không trừ) theo đúng luật!
 
         this.broadcastState();
         
-        // Auto-advance to the next question IMMEDIATELY (0 seconds)
-        this.startTimer(0, () => this.nextQuestion());
+        // Dừng 5 giây ở màn hình kết quả để học sinh nghỉ ngơi & xem điểm, sau đó tự nhảy câu mới
+        this.startTimer(5, () => this.nextQuestion());
     }
 
     nextQuestion() {

@@ -39,31 +39,42 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. PHÁT HIỆN CHUYỂN TAB HOẶC RỜI MÀN HÌNH (Chỉ áp dụng trong giao diện trả lời. Định nghĩa là folder có url chứa play-)
+    // 3. PHÁT HIỆN CHUYỂN TAB HOẶC RỜI MÀN HÌNH (MEME ĐỘ MIXI TROLL)
     const isTestInterface = window.location.pathname.includes('play-');
+    let hasTabCheated = false; // Cờ theo dõi hành vi chuyển tab
 
     if (isTestInterface) {
         document.addEventListener('visibilitychange', () => {
             if (document.hidden) {
+                // Người chơi vừa chuyển tab hoặc thu nhỏ trình duyệt để tra Google
                 document.body.classList.add('blurred-screen');
-                showAntiCheatWarning("Tab switching or leaving the screen detected! This action will be recorded and a warning will be sent to the host.");
+                hasTabCheated = true; // Đánh dấu tội trạng
+                
+                // Gửi báo cáo ngầm lên Host ngay lập tức
+                if (window.GameClient && window.GameClient.socket) {
+                    window.GameClient.socket.emit('player_action', { action: 'CHEAT_ALERT', payload: { reason: "Tab switching or leaving the screen detected!" } });
+                }
             } else {
+                // KHÚC NÀY LÀ LÚC NGƯỜI CHƠI QUAY LẠI TAB GAME
                 document.body.classList.remove('blurred-screen');
+                if (hasTabCheated) {
+                    // Kích hoạt Meme trừng phạt
+                    showTrollModal();
+                    hasTabCheated = false; // Reset lại cờ sau khi đã dọa xong
+                }
             }
         });
 
         window.addEventListener('blur', () => {
-            // Làm mờ nội dung để ngăn chặn việc chụp màn hình
             document.body.classList.add('blurred-screen');
         });
 
         window.addEventListener('focus', () => {
-            // Khi quay lại, bỏ hiệu ứng làm mờ
             document.body.classList.remove('blurred-screen');
         });
     }
 
-    // Modal chức năng cảnh báo
+    // Modal chức năng cảnh báo mặc định (Dành cho F12, Copy Paste...)
     function showAntiCheatWarning(message) {
         if (window.GameClient && window.GameClient.socket) {
             window.GameClient.socket.emit('player_action', { action: 'CHEAT_ALERT', payload: { reason: message } });
@@ -73,7 +84,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!modal) {
             modal = document.createElement('div');
             modal.id = 'anticheat-modal';
-            // Z-index cao để đè lên mọi màn hình
             modal.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 999999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);";
             modal.innerHTML = `
                 <div style="background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); font-family: 'Nunito', sans-serif; margin: 0 20px;">
@@ -91,13 +101,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 modal.style.display = 'none';
             });
             
-            // Hover effect cho button
             let btn = document.getElementById('anticheat-btn');
             btn.onmouseover = () => { btn.style.transform = "translateY(-2px)"; btn.style.boxShadow = "0 6px 20px rgba(230, 57, 70, 0.5)"};
             btn.onmouseout = () => { btn.style.transform = "translateY(0)"; btn.style.boxShadow = "0 4px 15px rgba(230, 57, 70, 0.4)" };
         } else {
             document.getElementById('anticheat-msg').textContent = message;
             modal.style.display = 'flex';
+        }
+    }
+
+    // 🚨 HÀM MỚI: HIỆN MEME ĐỘ MIXI TROLL KẺ GIAN LẬN 🚨
+    function showTrollModal() {
+        let teamNumber = window.GameClient && window.GameClient.team ? window.GameClient.team : "Hacker";
+        
+        // CẬP NHẬT ĐƯỜNG DẪN TƯƠNG ĐỐI TRỎ ĐẾN THƯ MỤC CHỨA FILE CỦA BẠN (VD: ../assets/sound/cheatingtroll.mp3)
+        let trollAudio = new Audio('../../assets/cheatingtroll.mp3'); 
+        trollAudio.play().catch(e => console.log("Audio play prevented", e));
+
+        let modal = document.getElementById('troll-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'troll-modal';
+            // Phủ nền đen kịt để tăng độ sợ hãi
+            modal.style.cssText = "position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.98); z-index: 9999999; display: flex; align-items: center; justify-content: center; flex-direction: column; backdrop-filter: blur(15px); padding: 20px;";
+            
+            // CẬP NHẬT ĐƯỜNG DẪN TƯƠNG ĐỐI TRỎ ĐẾN THƯ MỤC CHỨA ẢNH
+            modal.innerHTML = `
+                <img src="../../assets/cheatingtroll.jpg" alt="Troll Face" style="max-width: 90%; max-height: 50vh; border-radius: 20px; border: 6px solid #E63946; box-shadow: 0 0 80px rgba(230, 57, 70, 0.8); animation: anticheat-shake 0.15s ease-in-out infinite alternate;">
+                <h1 style="color: #FFF; font-family: 'Fredoka One', cursive; font-size: 32px; text-align: center; margin-top: 40px; line-height: 1.5; text-shadow: 3px 3px 0 #E63946;">
+                    Hello Team ${teamNumber}, Team ${teamNumber},<br>I know everything you've done, don't deny it!
+                </h1>
+                <button id="troll-btn" style="margin-top: 40px; background: #E63946; color: white; border: none; padding: 18px 40px; border-radius: 12px; font-family: 'Fredoka One', cursive; font-size: 20px; cursor: pointer; box-shadow: 0 5px 20px rgba(230, 57, 70, 0.6);">
+                    I'm so sorry 😭
+                </button>
+            `;
+            document.body.appendChild(modal);
+
+            document.getElementById('troll-btn').addEventListener('click', () => {
+                modal.style.display = 'none';
+                trollAudio.pause();      // Tắt tiếng khi bấm xin lỗi
+                trollAudio.currentTime = 0; 
+            });
+        } else {
+            modal.querySelector('h1').innerHTML = `Hello Team ${teamNumber}, Team ${teamNumber},<br>I know everything you've done, don't deny it!`;
+            modal.style.display = 'flex';
+            trollAudio.currentTime = 0;
+            trollAudio.play().catch(e => console.log("Audio play prevented", e));
         }
     }
     
@@ -107,9 +156,9 @@ document.addEventListener('DOMContentLoaded', () => {
         style.id = 'anticheat-style';
         style.innerHTML = `
             @keyframes anticheat-shake {
-                0%, 100% { transform: translateX(0); }
-                25% { transform: translateX(-5px) rotate(-5deg); }
-                75% { transform: translateX(5px) rotate(5deg); }
+                0%, 100% { transform: translateX(0) rotate(0); }
+                25% { transform: translateX(-8px) rotate(-3deg); }
+                75% { transform: translateX(8px) rotate(3deg); }
             }
         `;
         document.head.appendChild(style);
