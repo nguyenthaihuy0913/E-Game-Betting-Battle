@@ -124,21 +124,27 @@
      });
 
      window.addEventListener('gameStateUpdate', (e) => {
-         const state = e.detail;
+        const state = e.detail;
          
+        if (state.round === 2) {
+            window.location.href = './play-gap-fill.html';
+            return; // Dừng xử lý các lệnh bên dưới để tránh lỗi giao diện
+        }
+         // ----------------------------------------------
+
          // Sync question
-         if (window.loadQuestionFromState && state.currentQuestionIdx !== undefined) {
-             window.loadQuestionFromState(state.currentQuestionIdx);
-         }
+        if (window.loadQuestionFromState && state.currentQuestionIdx !== undefined) {
+            window.loadQuestionFromState(state.currentQuestionIdx);
+        }
          
-         // Sync Score
-         const teamInfo = state.teams.find(t => t.id === window.GameClient.team);
-         if (teamInfo) {
+        // Sync Score
+        const teamInfo = state.teams.find(t => t.id === window.GameClient.team);
+        if (teamInfo) {
              document.getElementById('score').innerText = teamInfo.score;
-         }
+        }
 
          // Visibility Logic
-         if(state.state === 'BETTING') {
+        if(state.state === 'BETTING') {
              document.getElementById('q-text').style.visibility = 'hidden';
              document.getElementById('options-grid').style.visibility = 'hidden';
 

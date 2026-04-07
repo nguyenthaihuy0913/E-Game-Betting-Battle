@@ -224,11 +224,24 @@ class Room {
         
         if (this.currentQuestionIdx >= totalQ) {
            if (this.round === 1) {
-               this.round = 2; this.currentQuestionIdx = 0; this.state = 'ROUND_TRANSITION'; this.broadcastState();
+               // Chuyển sang Round 2 (Gap Fill)
+               this.round = 2; 
+               this.currentQuestionIdx = 0; 
+               this.state = 'ROUND_TRANSITION'; 
+               this.broadcastState();
+               
+               // Đợi 3 giây để giao diện người chơi kịp chuyển trang, sau đó bắt đầu cược Round 2
+               setTimeout(() => {
+                   this.startRound();
+               }, 3000); 
+               
            } else {
-               this.state = 'ENDGAME'; this.broadcastState();
+               // Kết thúc toàn bộ game
+               this.state = 'ENDGAME'; 
+               this.broadcastState();
            }
         } else {
+           // Tiếp tục câu tiếp theo trong cùng Round
            this.startRound();
         }
     }
