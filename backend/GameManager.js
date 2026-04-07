@@ -39,13 +39,10 @@ class GameManager {
                 const { roomId, playerId, playerName, avatar } = data;
                 const room = this.rooms.get(roomId);
                 if (!room) {
-                    return callback({ success: false, error: 'Room not found or disconnected' });
+                    return callback({ success: false, error: 'Room not found' });
                 }
-                
+                socket.join(roomId);
                 const res = room.addPlayer(socket.id, playerId, playerName, avatar);
-                if(res && res.success) {
-                    socket.join(roomId);
-                }
                 callback(res);
             });
 
@@ -57,7 +54,11 @@ class GameManager {
             });
             
             socket.on('player_action', (data) => {
-                const room = Array.from(this.rooms.values()).find(r => r.players.has(socket.id));
+                // --- FIX TẠI ĐÂY: Thuật toán quét và tìm người chơi bằng Socket ID chuẩn xác ---
+                const room = Array.from(this.rooms.values()).find(r => 
+                    Array.from(r.players.values()).some(p => p.socketId === socket.id)
+                );
+                
                 if (room) {
                     room.handlePlayerAction(socket.id, data.action, data.payload);
                 }
@@ -80,7 +81,7 @@ class GameManager {
                                 this.io.to(room.id).emit('room_closed');
                                 this.rooms.delete(room.id);
                             }
-                        }, 5000); // 5 sec grace period for MPA navigation
+                        }, 5000); 
                     }
                 });
             });

@@ -16,7 +16,6 @@
   <div class="page">
     <div class="hd-page">
       
-      <!-- Header -->
       <div class="hd-header">
         <div class="hd-logo"><span class="w-sky">Host</span> <span class="w-gold">Dashboard</span></div>
         <div class="hd-status">
@@ -26,10 +25,8 @@
         <button class="btn bj" style="width: auto; padding: 10px 18px; font-size: 15px;" onclick="window.location.href='../../../../../index.html'">🚪 End Game</button>
       </div>
 
-      <!-- Main Layout Grid -->
       <div class="hd-grid">
         
-        <!-- Left Column: Leaderboard -->
         <div class="card ch card-slim" style="display: flex; flex-direction: column; max-height: 80vh;">
           <div class="cbar"></div>
           
@@ -44,21 +41,18 @@
           </div>
 
           <div class="hd-leaderboard" id="leaderboardList">
-             <!-- Dynamically populated via JS -->
-          </div>
+             </div>
         </div>
 
-        <!-- Right Column: Anticheat & Controls -->
         <div class="hd-right">
           
-          <!-- Anticheat Monitors -->
           <div class="card cj card-slim mb-20">
             <div class="cbar" style="background: linear-gradient(90deg, #E63946, #FB7185, #E63946); animation: bs 2s linear infinite;"></div>
             <div class="chead" style="margin-bottom: 15px;">
               <div class="cion" style="background: #FFE4E6; color: #E63946;">🚨</div>
               <div>
-                <div class="ctitle" style="color: #E63946;">Cheat Detector</div>
-                <div class="cdesc">Violations reported by the system</div>
+                 <div class="ctitle" style="color: #E63946;">Cheat Detector</div>
+                 <div class="cdesc">Violations reported by the system</div>
               </div>
             </div>
 
@@ -67,7 +61,6 @@
             </div>
           </div>
 
-          <!-- Quick Actions -->
           <div class="card ch card-slim">
             <div class="cbar"></div>
             <div class="chead" style="margin-bottom: 20px;">
@@ -104,21 +97,43 @@
   <script src="../../scripts/socket-client.js"></script>
   <script src="../../scripts/sfx.js"></script>
   <script src="../../scripts/main.js"></script>
+  <script src="./host-dashboard.js"></script>
+  
   <script>
     setTimeout(() => {
+        // --- BƯỚC QUAN TRỌNG: Reconnect (Báo danh lại) Host để không bị hủy phòng ---
+        const roomId = sessionStorage.getItem('roomId');
+        if (roomId && window.GameClient && window.GameClient.socket) {
+            window.GameClient.socket.emit('rebind_host', { roomId: roomId }, (res) => {
+                if (!res.success) {
+                    if (typeof toast === 'function') toast("⚠️ Error: Room was destroyed!");
+                }
+            });
+        }
+        // -------------------------------------------------------------------------
+
         const lb = document.getElementById('leaderboardList');
         
         window.addEventListener('gameStateUpdate', (e) => {
             const state = e.detail;
             document.getElementById('hd-round').innerText = 'Phase: ' + state.state + ' (Round ' + state.round + ')';
             
-            // Sort teams by score DESC
             const sorted = [...state.teams].sort((a,b) => b.score - a.score);
             lb.innerHTML = '';
             
             sorted.forEach((t, i) => {
-                if(t.memberCount === 0) return; // skip empty teams
+                if(t.memberCount === 0) return; 
                 
+                // NỘI DUNG TIẾNG ANH ĐÃ ĐƯỢC CẬP NHẬT
+                let statusText = '⏳ Waiting...';
+                if (state.state === 'BETTING') {
+                    statusText = t.hasBet ? `💰 Bet placed: <b style="color:#F59E0B">${t.currentBet} pts</b>` : '⏳ Discussing bet...';
+                } else if (state.state === 'QUESTION') {
+                    statusText = t.hasAnswered ? '✅ Answer locked' : `🧠 Thinking (Bet: ${t.currentBet})`;
+                } else if (state.state === 'ROUND_RESULT') {
+                    statusText = t.hasAnswered ? `🎯 Answer: ${t.lastAnswer || '?'}` : '❌ No answer (Bet: 0)';
+                }
+
                 const el = document.createElement('div');
                 el.className = `hd-team-row rank-${i+1}`;
                 el.innerHTML = `
@@ -126,8 +141,8 @@
                         <div class="hd-team-rank">#${i + 1}</div>
                         <div>
                             <div class="hd-team-name">Team ${t.id}</div>
-                            <div style="font-size: 11px; color: var(--ink3); font-weight: 700; margin-top:2px;">
-                                ${t.memberCount} Mems • ${t.hasAnswered ? '✅ Answered' : (t.hasBet ? '💰 Bet Placed' : '⏳ Waiting')}
+                            <div style="font-size: 12px; color: var(--ink3); font-weight: 700; margin-top:4px;">
+                                👥 ${t.memberCount} Mems • ${statusText}
                             </div>
                         </div>
                     </div>
@@ -137,26 +152,7 @@
                 `;
                 lb.appendChild(el);
             });
-            
         });
-        
-        window.addEventListener('cheatAlert', (e) => {
-            const alert = e.detail;
-            const logBox = document.getElementById('anticheatLogs');
-            const emptyMsg = document.getElementById('emptyLogMsg');
-            if(emptyMsg) emptyMsg.style.display = 'none';
-            
-            const li = document.createElement('div');
-            li.className = 'hd-log-item';
-            
-            const time = new Date(alert.time).toLocaleTimeString();
-            li.innerHTML = `
-              <div class="hd-log-time">${time}</div>
-              <div class="hd-log-msg"><strong>${alert.playerName}</strong> (Team ${alert.team}): <span style="color:#E63946">${alert.reason}</span></div>
-            `;
-            logBox.prepend(li);
-        });
-        
     }, 500);
   </script>
 </body>
