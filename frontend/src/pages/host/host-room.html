@@ -128,7 +128,7 @@
            state.players.forEach(p => {
                const el = document.createElement('div');
                el.className = 'hr-player-chip';
-               el.innerHTML = `<div class="hr-avatar">🦁</div><div class="hr-name">${p.name}</div>`;
+               el.innerHTML = `<div class="hr-avatar">${p.avatar || '👻'}</div><div class="hr-name">${p.name}</div>`;
                grid.appendChild(el);
            });
            document.querySelector('.hr-count').innerText = state.players.length + ' / 40';

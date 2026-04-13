@@ -37,23 +37,33 @@
 
         <!-- Pre-Question Betting Phase -->
         <div class="betting-phase-overlay" id="bettingPhase">
-          <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
-          <h2 style="font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--ink); margin-bottom: 10px;">Place Your Bet!</h2>
-          <p style="color:var(--ink3); font-weight:700; margin-bottom:24px;">Lock in your bet before facing the question!</p>
-          
-          <div class="bet-widget">
-            <div class="bet-header">🪙 Bet Points</div>
-            <div class="bet-input-wrap">
-              <input type="number" class="bet-input" id="mcq-bet-input" placeholder="0" min="0">
-              <div class="bet-quick-btns">
-                <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=10; if(window.playClick) window.playClick();">10</button>
-                <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=30; if(window.playClick) window.playClick();">30</button>
-                <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=parseInt(document.getElementById('score').innerText) || 50; if(window.playClick) window.playClick();">ALL</button>
+          <div id="normalBetUI" style="display:flex; flex-direction:column; align-items:center; width:100%;">
+              <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
+              <h2 style="font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--ink); margin-bottom: 10px;">Place Your Bet!</h2>
+              <p style="color:var(--ink3); font-weight:700; margin-bottom:24px;">Lock in your bet before facing the question!</p>
+              
+              <div class="bet-widget">
+                <div class="bet-header">🪙 Bet Points</div>
+                <div class="bet-input-wrap">
+                  <input type="number" class="bet-input" id="mcq-bet-input" placeholder="0" min="0">
+                  <div class="bet-quick-btns">
+                    <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=10; if(window.playClick) window.playClick();">10</button>
+                    <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=30; if(window.playClick) window.playClick();">30</button>
+                    <button class="bet-btn" onclick="document.getElementById('mcq-bet-input').value=parseInt(document.getElementById('score').innerText) || 50; if(window.playClick) window.playClick();">ALL</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
 
-          <button class="btn bh" style="width: 100%; max-width: 300px; padding: 18px; border-radius: 20px; font-size: 18px; box-shadow: 0 10px 30px rgba(16,185,129,0.3)" onclick="confirmBetAction()">🔒 Confirm Bet</button>
+              <button class="btn bh" style="width: 100%; max-width: 300px; padding: 18px; border-radius: 20px; font-size: 18px; box-shadow: 0 10px 30px rgba(16,185,129,0.3); margin-top:24px;" onclick="confirmBetAction()">🔒 Confirm Bet</button>
+          </div>
+          
+          <div id="undyingBetUI" style="display: none; flex-direction: column; align-items: center; justify-content: center; width:100%;">
+             <div style="width: 100px; height: 100px; margin-bottom: 20px; animation: pulse 2s infinite;">
+                <img src="../../assets/Totem_of_Undying.png" style="width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 0 20px rgba(234, 179, 8, 0.8));">
+             </div>
+             <h2 style="font-family: 'Fredoka One', cursive; font-size: 28px; color: var(--ink); margin-bottom: 10px;">Totem Active!</h2>
+             <p style="color:var(--ink3); font-weight:700; margin-bottom:24px; text-align:center;">Betting is locked.<br>Answer correctly to break the curse!</p>
+          </div>
         </div>
         <!-- Question Badge -->
         <div class="q-badge" id="q-counter">
@@ -150,7 +160,16 @@
 
              document.getElementById('bettingPhase').classList.remove('hidden');
              const team = state.teams.find(t => t.id === window.GameClient.team);
-             if (team && team.hasBet) {
+             
+             if (team && team.isUndying) {
+                 document.getElementById('normalBetUI').style.display = 'none';
+                 document.getElementById('undyingBetUI').style.display = 'flex';
+             } else {
+                 document.getElementById('normalBetUI').style.display = 'flex';
+                 document.getElementById('undyingBetUI').style.display = 'none';
+             }
+
+             if (team && team.hasBet && !team.isUndying) {
                   document.getElementById('bettingPhase').classList.add('hidden');
              }
          } else if (state.state === 'QUESTION' || state.state === 'ROUND_RESULT') {
