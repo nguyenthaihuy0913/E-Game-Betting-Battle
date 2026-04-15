@@ -24,68 +24,13 @@
     - Cập nhật số điểm của toàn bộ các đội ở thời gian thực (Real-time).
     - Cấp quyền cho người chơi và quản lý phòng chờ.
 
-### ⚙️ Cấu trúc Hệ thống
+## Cấu trúc thư mục
+- `backend/`: Xử lý logic game, tính điểm, kết nối Database (Host API).
+- `frontend/`: Giao diện hiển thị (HTML, CSS, JS) cho người chơi và quản trò.
+- `data/`: Nơi lưu trữ tài nguyên (Danh sách 40+ từ vựng Summit 1, cấu trúc câu hỏi).
+- `docs/`: File tài liệu nộp khóa luận cho giảng viên (Rulebook, Slide thuyết trình).
 
-- `backend/`: Trái tim của ứng dụng sử dụng **Node.js** và **Socket.io** giúp điều phối trạng thái mọi phòng chơi, người chơi và duy trì kết nối theo thời gian thực một cách ổn định nhất.
-- `frontend/`: Giao diện ứng dụng web được tối ưu hiển thị gồm hai thành phần riêng biệt dành cho người chơi (`player/`) và màn hình tổng điều khiển (`host/`), đi kèm bộ hoạt ảnh và âm thanh sống động (HTML/CSS/JS).
-
-### 🚀 Cài đặt & Chạy ứng dụng
-
-1. **Yêu cầu hệ thống:** Hãy chắc chắn bạn đã cài đặt [Node.js](https://nodejs.org/).
-2. **Cài đặt các gói thư viện:**
-   Mở terminal tại thư mục gốc của dự án và chạy:
-   ```bash
-   npm install
-   ```
-3. **Khởi động Máy chủ (Server):**
-   ```bash
-   npm start
-   ```
-4. **Truy cập Giao diện:**
-   - **Giao diện dành cho Quản trò (Host):** `http://localhost:3000/host`
-   - **Giao diện truy cập cho Người chơi (Player):** `http://localhost:3000/`
-
-<div align="right">
-  <a href="#top">⬆️ Về đầu trang (Back to top)</a>
-</div>
-
----
-
-<a name="english"></a>
-## 🇬🇧 English
-
-**E-Game Betting Battle** is a real-time multiplayer interactive quiz game system explicitly built for competitive team gameplay. It introduces a challenging balance between solid knowledge and pure risk with its integrated scoring and betting mechanism.
-
-### 🌟 Key Features
-- **💸 The Betting Battle Mechanism**: Before locking in their answers, teams must decide on their wagers. A correct answer rewards the team with points equalling their total bet, while a wrong answer subtracts their wager directly from their current score. High stakes, high rewards!
-- **🗿 Totem of Undying Revival**: An ultimate safety-net feature. Should a team's points plummet to $\le 10$ following a tragic miscalculation, the system dramatically activates the Totem of Undying. It instantly triggers a revival animation, granting the team a vital 10-point emergency lifeline. It also wisely suspends their betting privileges and halts any future point deductions until they prove their worth by getting the next answer right.
-- **👁️ Anti-Cheat Troll System**: Thinking of searching the web for an answer? Think again! The application permanently monitors browser tab focus. Any team that switches tabs or minimizes the window during a live game gets ambushed by a loud, flashing "troll" trap on their screen upon returning. Simultaneously, their team instantly gets highlighted as cheating on the Host's live screen.
-- **👑 Dedicated Host Dashboard & Leaderboard**: A sophisticated control center allowing the game master to seamlessly:
-    - Orchestrate interactive matches easily.
-    - Synchronize & visualize real-time point-shifts across all participating teams via websockets.
-    - Maintain lobby integrity by carefully vetting joining players.
-
-### ⚙️ Project Architecture
-
-- `backend/`: Constructed using **Node.js** and **Socket.io**. Houses the internal intelligence overseeing vital game states, user administration, scoring validation, and maintaining robust real-time bi-directional events.
-- `frontend/`: Powered by pristine standard web components (HTML/CSS/Native JavaScript). Logically partitioned into immersive `player/` interactive layouts and an all-seeing `host/` master dashboard alongside dynamic graphical + sound overlays.
-
-### 🚀 Setup & Execution Guide
-
-1. **Requirement Check:** Ensure [Node.js](https://nodejs.org/) is properly installed on your machine.
-2. **Retrieve Dependencies:**
-   Launch a terminal at the project root and enter:
-   ```bash
-   npm install
-   ```
-3. **Ignite the Server:**
-   ```bash
-   npm start
-   ```
-4. **Enter the Game Interfaces:**
-   - **Launch Host Master-Control:** `http://localhost:3000/host`
-   - **Load Player Portal:** `http://localhost:3000/`
-
-<div align="right">
-  <a href="#top">⬆️ Back to top</a>
-</div>
+## Tính năng chính
+- Dành cho 7 đội tham gia (mỗi đội 2-4 thành viên).
+- 5 Vòng chơi gồm các chế độ: Vocab Rush, Grammar Strike, Speed Buzzer, Elimination Bet, Final All-in.
+- Tích hợp hệ thống cá cược điểm để tăng độ kịch tính.
