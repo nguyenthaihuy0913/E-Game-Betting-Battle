@@ -10,5 +10,4 @@ Project xây dựng trò chơi điện tử giúp ôn tập từ vựng cho bài
 
 ## Tính năng chính
 - Dành cho 7 đội tham gia (mỗi đội 2-4 thành viên).
-- 5 Vòng chơi gồm các chế độ: Vocab Rush, Grammar Strike, Speed Buzzer, Elimination Bet, Final All-in.
 - Tích hợp hệ thống cá cược điểm để tăng độ kịch tính.
