@@ -114,6 +114,10 @@ if (socket) {
             window.ItemSystem.simulateDrop();
         }
     });
+
+    socket.on('team_answered', (data) => {
+        window.dispatchEvent(new CustomEvent('teamAnswered', { detail: data }));
+    });
     
     socket.on('totem_activated', () => {
         const audio = new Audio('../../assets/Totem_of_Undying.mp3');

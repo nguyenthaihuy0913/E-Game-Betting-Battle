@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Match Results - Betting Battle</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="./player-layout.css">
+</head>
+<body>
+  <canvas id="cv"></canvas>
+  <div class="grain"></div>
+  <div class="particles" id="pt"></div>
+
+  <div class="page">
+    <div class="hero">
+      <h1 class="gtitle">Match <span class="w-gold">Results</span></h1>
+      <p class="tsub">The battle has ended! Let's see how you did.</p>
+    </div>
+
+    <div class="test-container" style="max-width: 600px; display: flex; flex-direction: column; gap: 20px;">
+      
+      <!-- Player Stats -->
+      <div class="card ch card-slim" style="text-align: center; padding: 40px 20px;">
+        <div style="font-size: 60px; margin-bottom: 10px;" id="rank-icon">🏆</div>
+        <h2 style="font-family: 'Fredoka One', cursive; font-size: 32px; color: var(--ink); margin-bottom: 10px;">Your Rank: <span id="my-rank">#?</span></h2>
+        <p style="color: var(--ink3); font-size: 18px; font-weight: 700;">Final Score: <span id="my-score" style="color: #F59E0B; font-size: 24px;">0</span> pts</p>
+      </div>
+
+      <!-- Top 3 Leaderboard -->
+      <div class="card cj card-slim" style="padding: 20px;">
+        <div class="chead" style="margin-bottom: 20px;">
+          <div class="cion">🏅</div>
+          <div>
+            <div class="ctitle">Top Teams</div>
+            <div class="cdesc">Highest final scores</div>
+          </div>
+        </div>
+
+        <div id="top-teams-list" style="display: flex; flex-direction: column; gap: 10px;">
+            <!-- Dynamically injected -->
+        </div>
+      </div>
+      
+      <button class="btn bh" style="width: 100%; padding: 18px; font-size: 18px; border-radius: 20px; box-shadow: 0 10px 30px rgba(16,185,129,0.3);" onclick="window.location.href='../../../../../index.html'">Back to Home Dashboard</button>
+
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="../../scripts/socket-client.js"></script>
+  <script src="../../scripts/main.js"></script>
+
+  <script>
+     window.addEventListener('gameStateUpdate', (e) => {
+         const state = e.detail;
+         
+         const activeTeams = state.teams.filter(t => t.memberCount > 0);
+         const sorted = activeTeams.sort((a,b) => b.score - a.score);
+         
+         // Find player's rank
+         const myPlayerId = window.GameClient.playerId;
+         const me = state.players.find(p => p.id === myPlayerId);
+         const myTeamId = me ? me.team : window.GameClient.team;
+
+         const myRankIdx = sorted.findIndex(t => t.id === myTeamId);
+         
+         if (myRankIdx !== -1) {
+             const finalScore = sorted[myRankIdx].score;
+             document.getElementById('my-rank').innerText = '#' + (myRankIdx + 1);
+             document.getElementById('my-score').innerText = finalScore;
+             
+             const icon = document.getElementById('rank-icon');
+             if (myRankIdx === 0) icon.innerText = '🥇';
+             else if (myRankIdx === 1) icon.innerText = '🥈';
+             else if (myRankIdx === 2) icon.innerText = '🥉';
+             else icon.innerText = '👏';
+         }
+
+         // Populate top 3
+         const list = document.getElementById('top-teams-list');
+         list.innerHTML = '';
+         for (let i = 0; i < Math.min(3, sorted.length); i++) {
+             const t = sorted[i];
+             const el = document.createElement('div');
+             el.style.display = 'flex';
+             el.style.justifyContent = 'space-between';
+             el.style.padding = '15px';
+             el.style.background = 'rgba(255,255,255,0.5)';
+             el.style.borderRadius = '12px';
+             el.style.fontWeight = '700';
+             
+             let medal = '#' + (i+1);
+             if (i===0) medal = '🥇 #1';
+             if (i===1) medal = '🥈 #2';
+             if (i===2) medal = '🥉 #3';
+
+             el.innerHTML = `
+                 <div><span style="display:inline-block; width: 50px; color: var(--ink3);">${medal}</span> Team ${t.id} ${t.id === myTeamId ? '(You)' : ''}</div>
+                 <div style="color: #F59E0B;">${t.score} pts</div>
+             `;
+             list.appendChild(el);
+         }
+     });
+  </script>
+</body>
+</html>

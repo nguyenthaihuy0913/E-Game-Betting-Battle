@@ -116,13 +116,18 @@
         
         window.addEventListener('gameStateUpdate', (e) => {
             const state = e.detail;
+            if (state.state === 'ENDGAME') {
+                 window.location.href = './host-endgame.html';
+                 return;
+            }
+
             document.getElementById('hd-round').innerText = 'Phase: ' + state.state + ' (Round ' + state.round + ')';
             
-            const sorted = [...state.teams].sort((a,b) => b.score - a.score);
+            const activeTeams = state.teams.filter(t => t.memberCount > 0);
+            const sorted = activeTeams.sort((a,b) => b.score - a.score);
             lb.innerHTML = '';
             
             sorted.forEach((t, i) => {
-                if(t.memberCount === 0) return; 
                 
                 // NỘI DUNG TIẾNG ANH ĐÃ ĐƯỢC CẬP NHẬT
                 let statusText = '⏳ Waiting...';
@@ -132,6 +137,8 @@
                     statusText = t.hasAnswered ? '✅ Answer locked' : `🧠 Thinking (Bet: ${t.currentBet})`;
                 } else if (state.state === 'ROUND_RESULT') {
                     statusText = t.hasAnswered ? `🎯 Answer: ${t.lastAnswer || '?'}` : '❌ No answer (Bet: 0)';
+                } else if (state.state === 'ENDGAME') {
+                    statusText = '🏁 Match Finished 🎉';
                 }
 
                 const el = document.createElement('div');

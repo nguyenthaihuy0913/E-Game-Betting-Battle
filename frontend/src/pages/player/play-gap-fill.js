@@ -7,10 +7,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     const nextBtn = document.getElementById('next-btn');
     const scoreSpan = document.getElementById('score');
 
+    let allQuestions = [];
     let questions = [];
+    let serverIndices = null;
     let currentIdx = 0;
     let score = 0;
     let isAnswered = false;
+
+    window.updateQuestionsList = function(indices) {
+        serverIndices = indices;
+        if (allQuestions.length > 0 && questions.length === 0 && serverIndices) {
+            questions = serverIndices.map(i => allQuestions[i]);
+            if (questions.length > currentIdx) loadQuestion(currentIdx);
+        }
+    };
 
     // Expose loadQuestion to window for server sync
     window.loadQuestionFromState = function(idx) {
@@ -26,17 +36,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
         const res = await fetch('../../data/questions.json');
         const data = await res.json();
-        questions = data.gap_fill || [];
-        if (questions.length > 0) {
-            loadQuestion(currentIdx);
-            
-            // Default to hiding the question unless told otherwise
-            qText.style.visibility = 'hidden';
-            gfInput.style.visibility = 'hidden';
-            submitBtn.style.visibility = 'hidden';
-        } else {
-            qText.innerText = "No questions found.";
+        allQuestions = data.gap_fill || [];
+        if (serverIndices && questions.length === 0) {
+            questions = serverIndices.map(i => allQuestions[i]);
+            if (questions.length > currentIdx) loadQuestion(currentIdx);
         }
+        
+        // Default to hiding the question unless told otherwise
+        qText.style.visibility = 'hidden';
+        gfInput.style.visibility = 'hidden';
+        submitBtn.style.visibility = 'hidden';
     } catch (err) {
         console.error("Error loading questions.json", err);
         qText.innerText = "Error loading questions data.";

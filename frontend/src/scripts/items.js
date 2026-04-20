@@ -351,7 +351,7 @@ window.ItemSystem = {
       const myTeam = window.GameClient ? window.GameClient.team : null;
       
       this.liveTeams.forEach(team => {
-          if (team.id === myTeam) return; 
+          if (team.id === myTeam || team.memberCount === 0) return; 
           
           let btn = document.createElement('button');
           btn.className = 'target-btn';

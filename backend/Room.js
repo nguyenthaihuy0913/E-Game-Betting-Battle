@@ -14,9 +14,24 @@ class Room {
 
         this.TOTAL_MCQ = 20;
         this.TOTAL_GAP = 10;
-        this.TIME_BET = 15;
-        this.TIME_QUESTION = 30;
+        this.TIME_BET = 12;
+        this.TIME_QUESTION = 27;
         this.TIME_FORM = 60;
+
+        try {
+            const data = require('../frontend/src/data/questions.json');
+            let mcqAll = Array.from({length: data.multiple_choice.length}, (_, i) => i);
+            mcqAll.sort(() => Math.random() - 0.5);
+            this.mcqIndices = mcqAll.slice(0, this.TOTAL_MCQ);
+            
+            let gapAll = Array.from({length: data.gap_fill.length}, (_, i) => i);
+            gapAll.sort(() => Math.random() - 0.5);
+            this.gapIndices = gapAll.slice(0, this.TOTAL_GAP);
+        } catch (e) {
+            console.error("Error loading JSON for shuffle:", e);
+            this.mcqIndices = Array.from({length: this.TOTAL_MCQ}, (_, i) => i);
+            this.gapIndices = Array.from({length: this.TOTAL_GAP}, (_, i) => i);
+        }
     }
 
     addPlayer(socketId, playerId, name, avatar) {
@@ -71,8 +86,9 @@ class Room {
                         // FIX TẠI ĐÂY: Hỗ trợ bắt chuẩn số tiền cược từ Client gửi lên
                         let rawBet = (payload && payload.bet !== undefined) ? payload.bet : payload;
                         const betAmount = parseInt(rawBet, 10);
+                        const finalBet = isNaN(betAmount) ? 1 : Math.max(1, betAmount);
 
-                        team.currentBet = Math.min(isNaN(betAmount) ? 0 : betAmount, team.score);
+                        team.currentBet = Math.min(finalBet, Math.max(1, team.score));
                         team.hasBet = true;
                         this.broadcastState();
                         this.checkAllBetsIn();
@@ -135,12 +151,13 @@ class Room {
                 switch (payload.item) {
                     case 'thief':
                         if (targetTeam && userTeam) {
-                            targetTeam.score = Math.max(0, targetTeam.score - 15);
-                            userTeam.score += 15;
+                            let stolen = Math.min(15, targetTeam.score);
+                            targetTeam.score = Math.max(0, targetTeam.score - stolen);
+                            userTeam.score += stolen;
                         }
                         break;
                     case 'tax':
-                        let taxTop = Array.from(this.teams.values()).sort((a, b) => b.score - a.score)[0];
+                        let taxTop = Array.from(this.teams.values()).filter(t => t.members.length > 0).sort((a, b) => b.score - a.score)[0];
                         if (taxTop) taxTop.score -= Math.floor(taxTop.score * 0.1);
                         break;
                     case 'snipper':
@@ -283,13 +300,12 @@ class Room {
         try {
             const data = require('../frontend/src/data/questions.json');
             if (this.round === 1) {
-                // Dùng đúng key multiple_choice theo JSON của bạn
-                const q = data.multiple_choice[this.currentQuestionIdx];
-                // Cắt bỏ "A. " ở đầu để lấy text thuần so sánh
+                const globalIdx = this.mcqIndices[this.currentQuestionIdx];
+                const q = data.multiple_choice[globalIdx];
                 correctAnswerText = q.correct_answer_text.replace(/^[A-D][.\s]+/, '').trim().toLowerCase();
             } else {
-                // Dùng đúng key gap_fill theo JSON của bạn
-                const q = data.gap_fill[this.currentQuestionIdx];
+                const globalIdx = this.gapIndices[this.currentQuestionIdx];
+                const q = data.gap_fill[globalIdx];
                 correctAnswerText = q.correct_answer.trim().toLowerCase();
             }
         } catch (e) {
@@ -353,7 +369,7 @@ class Room {
         activeTeams.forEach(t => {
             if (t.score <= 10 && !t.isUndying) {
                 t.isUndying = true;
-                t.score = 10;
+                t.score += 20;
                 t.members.forEach(m => {
                     if (m.socketId) this.io.to(m.socketId).emit('totem_activated');
                 });
@@ -412,7 +428,8 @@ class Room {
                     isUndying: t.isUndying
                 };
             }),
-            round: this.round, currentQuestionIdx: this.currentQuestionIdx, hostId: this.hostId
+            round: this.round, currentQuestionIdx: this.currentQuestionIdx, hostId: this.hostId,
+            mcqIndices: this.mcqIndices, gapIndices: this.gapIndices
         };
         this.io.to(this.id).emit('game_state', statePayload);
     }

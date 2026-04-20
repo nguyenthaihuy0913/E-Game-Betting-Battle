@@ -34,6 +34,14 @@
            <div id="unified-timer-fill" style="height: 100%; width: 100%; background: linear-gradient(90deg, #FCD34D, #F59E0B); transition: width 1s linear;"></div>
         </div>
 
+        <!-- Team Answered Overlay -->
+        <div id="teamAnsweredOverlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 80; display: none; flex-direction: column; align-items: center; justify-content: center;">
+            <div style="font-size: 50px; margin-bottom: 10px;">🛡️</div>
+            <h2 style="font-family: 'Fredoka One', cursive; font-size: 28px; color: #10B981; margin-bottom: 10px; text-align: center;">Team Member Answered!</h2>
+            <p style="color:#aaa; font-weight:700; text-align:center; font-size: 18px;">Answered by: <span id="teamAnsweredName" style="color: #fff;"></span></p>
+            <p style="color:#aaa; font-weight:700; text-align:center; margin-top: 5px; font-size: 16px;">Please wait for the question to end...</p>
+        </div>
+
         <!-- Pre-Question Betting Phase -->
         <div class="betting-phase-overlay" id="bettingPhase">
           <div style="font-size: 50px; margin-bottom: 10px;">💰</div>
@@ -43,7 +51,7 @@
           <div class="bet-widget">
             <div class="bet-header">🪙 Bet Points</div>
             <div class="bet-input-wrap">
-              <input type="number" class="bet-input" id="gf-bet-input" placeholder="0" min="0">
+              <input type="number" class="bet-input" id="gf-bet-input" placeholder="1" min="1">
               <div class="bet-quick-btns">
                 <button class="bet-btn" onclick="document.getElementById('gf-bet-input').value=10; if(window.playClick) window.playClick();">10</button>
                 <button class="bet-btn" onclick="document.getElementById('gf-bet-input').value=30; if(window.playClick) window.playClick();">30</button>
@@ -133,6 +141,10 @@
      window.addEventListener('gameStateUpdate', (e) => {
          const state = e.detail;
          
+         if (state.gapIndices && window.updateQuestionsList) {
+             window.updateQuestionsList(state.gapIndices);
+         }
+
          // Sync question
          if (window.loadQuestionFromState && state.currentQuestionIdx !== undefined) {
              window.loadQuestionFromState(state.currentQuestionIdx);
@@ -144,8 +156,13 @@
              document.getElementById('score').innerText = teamInfo.score;
          }
 
-         // Visibility Logic
-         if(state.state === 'BETTING') {
+         if (state.state === 'ENDGAME') {
+             window.location.href = './player-endgame.html';
+             return;
+         }
+
+          // Visibility Logic
+          if(state.state === 'BETTING') {
              document.getElementById('q-text').style.visibility = 'hidden';
              document.getElementById('gf-input').style.visibility = 'hidden';
              document.getElementById('submit-btn').style.visibility = 'hidden';
@@ -162,6 +179,16 @@
              
              document.getElementById('bettingPhase').classList.add('hidden');
          }
+
+         if(state.state !== 'QUESTION') {
+             document.getElementById('teamAnsweredOverlay').style.display = 'none';
+         }
+     });
+     
+     window.addEventListener('teamAnswered', (e) => {
+         const data = e.detail;
+         document.getElementById('teamAnsweredName').innerText = data.submittor;
+         document.getElementById('teamAnsweredOverlay').style.display = 'flex';
      });
 
      let questionTimerInt = null;
